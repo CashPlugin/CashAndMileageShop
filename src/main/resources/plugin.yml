@@ -1,0 +1,4 @@
+name: CashAndMileageShop
+version: '${version}'
+main: com.uomaep.cashandmileageshop.CashAndMileageShop
+api-version: '1.18'
