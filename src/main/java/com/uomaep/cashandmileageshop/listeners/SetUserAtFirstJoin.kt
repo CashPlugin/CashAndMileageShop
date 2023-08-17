@@ -30,12 +30,18 @@ class SetUserAtFirstJoin(val plugin: JavaPlugin): Listener {
     private fun saveFailedUserDataToFile(player: Player): Boolean {
         val fileName = "failedUserData.yml"
         val configFile = File(plugin.dataFolder, fileName)
-        val config = YamlConfiguration()
+        var config:  YamlConfiguration
+
+        if (configFile.exists()) {
+            config = YamlConfiguration.loadConfiguration(configFile)
+        } else {
+            config = YamlConfiguration()
+        }
 
         val failedUserData = hashMapOf(
             "nickname" to player.name,
             "uuid" to player.uniqueId.toString(),
-            "timestamp" to LocalDateTime.now()
+            "timestamp" to LocalDateTime.now().toString()
         )
 
         var userCount = 1

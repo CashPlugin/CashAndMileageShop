@@ -31,7 +31,8 @@ class CashCommand: CommandExecutor, TabCompleter {
             player.sendMessage("§a[§e$§a] $message")
         }
 
-        private fun getCashByUUID(uuid: String): Int {
+        private fun getCashByUUID(uuid: String? = null): Int {
+            if(uuid == null) return -1
             val resultSet = DatabaseManager.select("select cash from user where uuid = '$uuid';")
             if(resultSet!!.next()) {
                 return resultSet.getInt("cash")
@@ -39,17 +40,20 @@ class CashCommand: CommandExecutor, TabCompleter {
             return -1
         }
 
-        private fun setCashByUUID(uuid: String, balance: Int): Boolean {
+        private fun setCashByUUID(uuid: String? = null, balance: Int): Boolean {
+            if(uuid == null) return false
             return DatabaseManager.update("update user set cash = $balance where uuid = '$uuid';")
         }
 
-        private fun addCashByUUID(uuid: String, balance: Int): Boolean {
+        private fun addCashByUUID(uuid: String? = null, balance: Int): Boolean {
+            if(uuid == null) return false
             val cash = getCashByUUID(uuid)
             if(cash == -1) return false
             return setCashByUUID(uuid, cash + balance)
         }
 
-        private fun subtractCashByUUID(uuid: String, balance: Int): Boolean {
+        private fun subtractCashByUUID(uuid: String? = null, balance: Int): Boolean {
+            if(uuid == null) return false
             val cash = getCashByUUID(uuid)
             if(cash == -1) return false
 

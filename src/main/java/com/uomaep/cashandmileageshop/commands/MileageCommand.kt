@@ -31,7 +31,8 @@ class MileageCommand: CommandExecutor, TabCompleter {
             player.sendMessage("§a[§e$§a] $message")
         }
 
-        private fun getMileageByUUID(uuid: String): Int {
+        private fun getMileageByUUID(uuid: String? = null): Int {
+            if(uuid == null) return -1
             val resultSet = DatabaseManager.select("select mileage from user where uuid = '$uuid';")
             if(resultSet!!.next()) {
                 return resultSet.getInt("mileage")
@@ -39,17 +40,20 @@ class MileageCommand: CommandExecutor, TabCompleter {
             return -1
         }
 
-        private fun setMileageByUUID(uuid: String, balance: Int): Boolean {
+        private fun setMileageByUUID(uuid: String? = null, balance: Int): Boolean {
+            if(uuid == null) return false
             return DatabaseManager.update("update user set mileage = $balance where uuid = '$uuid';")
         }
 
-        private fun addMileageByUUID(uuid: String, balance: Int): Boolean {
+        private fun addMileageByUUID(uuid: String? = null, balance: Int): Boolean {
+            if(uuid == null) return false
             val mileage = getMileageByUUID(uuid)
             if(mileage == -1) return false
             return setMileageByUUID(uuid, mileage + balance)
         }
 
-        private fun subtractMileageByUUID(uuid: String, balance: Int): Boolean {
+        private fun subtractMileageByUUID(uuid: String? = null, balance: Int): Boolean {
+            if(uuid == null) return false
             val mileage = getMileageByUUID(uuid)
             if(mileage == -1) return false
 

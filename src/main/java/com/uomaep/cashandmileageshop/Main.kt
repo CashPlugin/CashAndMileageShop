@@ -2,6 +2,7 @@ package com.uomaep.cashandmileageshop
 
 import com.uomaep.cashandmileageshop.commands.CashCommand
 import com.uomaep.cashandmileageshop.commands.SetItemCommand
+import com.uomaep.cashandmileageshop.commands.UUIDCommand
 import com.uomaep.cashandmileageshop.listeners.SetUserAtFirstJoin
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.mileageandmileageshop.commands.MileageCommand
@@ -18,6 +19,7 @@ class Main : JavaPlugin() {
         getCommand("캐시")?.setExecutor(CashCommand())
         getCommand("마일리지")?.setExecutor(MileageCommand())
         getCommand("아이템등록")?.setExecutor(SetItemCommand())
+        getCommand("us")?.setExecutor(UUIDCommand())
 
         // 이벤트 등록
         server.pluginManager.registerEvents(SetUserAtFirstJoin(this), this)
