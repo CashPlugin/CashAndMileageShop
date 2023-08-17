@@ -1,4 +1,7 @@
 name: CashAndMileageShop
 version: '${version}'
-main: com.uomaep.cashandmileageshop.CashAndMileageShop
+main: com.uomaep.cashandmileageshop.Main
 api-version: '1.18'
+
+commands:
+  캐시:
