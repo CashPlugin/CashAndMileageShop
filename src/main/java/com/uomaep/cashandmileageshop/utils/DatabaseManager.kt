@@ -62,6 +62,7 @@ object DatabaseManager {
                 return con.prepareStatement(statement).executeQuery()
             } catch (e: SQLException) {
                 Bukkit.getLogger().log(Level.SEVERE, "Error during SELECT operation", e)
+                return null
             }
         } else {
             Bukkit.getLogger().severe("Connection is null")
@@ -76,6 +77,7 @@ object DatabaseManager {
                 con.prepareStatement(statement).executeUpdate()
             } catch (e: SQLException) {
                 Bukkit.getLogger().log(Level.SEVERE, "Error during UPDATE operation", e)
+                return false
             }
         } else {
             Bukkit.getLogger().severe("Connection is null")
