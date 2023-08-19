@@ -6,6 +6,7 @@ import com.uomaep.cashandmileageshop.commands.UUIDCommand
 import com.uomaep.cashandmileageshop.listeners.SetUserAtFirstJoin
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.kotlintestplugin.command.CashShopCommand
+import com.uomaep.kotlintestplugin.command.MileageShopCommand
 import com.uomaep.mileageandmileageshop.commands.MileageCommand
 import org.bukkit.plugin.java.JavaPlugin
 
@@ -22,6 +23,7 @@ class Main : JavaPlugin() {
         getCommand("아이템등록")?.setExecutor(SetItemCommand())
         getCommand("us")?.setExecutor(UUIDCommand())
         getCommand("캐시샵")?.setExecutor(CashShopCommand())
+        getCommand("마일리지샵")?.setExecutor(MileageShopCommand())
 
         // 이벤트 등록
         server.pluginManager.registerEvents(SetUserAtFirstJoin(this), this)

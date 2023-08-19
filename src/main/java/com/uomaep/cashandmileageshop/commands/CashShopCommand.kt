@@ -224,7 +224,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                     return false
                 }
 
-                sender.sendMessage("<$cashShopName> <$itemName> <$slotNum> <$price> <$maxBuyableCnt> <$maxBuyableCntServer> 아이템이 캐시샵에 진열되었습니다.")
+                sender.sendMessage("[<$cashShopName>]에 [<$itemName>: <$price>캐시]가 진열되었습니다.")
             }
 
             "아이템삭제" -> {
