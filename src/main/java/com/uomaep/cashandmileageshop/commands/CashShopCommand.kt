@@ -10,7 +10,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>?): List<String> {
         if (args!!.size == 1) {
-            return listOf("생성", "삭제", "진열", "아이템삭제", "목록", "오픈")
+            return listOf("생성", "삭제", "진열", "아이템삭제", "목록", "오픈", "닫기")
         }
         return when (args[0]) {
             "생성"-> {
@@ -57,7 +57,8 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                     in cashShopNames -> {
                         val slotNums = mutableListOf<String>()
 
-                        val sql2 = "select cash_item.slot_num from cash_item join " +
+                        val sql2 = "select cash_item.slot_num " +
+                                "from cash_item join " +
                                 "(select id from cash_shop where name = '$cashShopName') as cash_shop_id " +
                                 "on cash_shop_id.id = cash_item.cash_shop_id " +
                                 "and state = 1;"
@@ -75,13 +76,18 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
             }
 
             "목록" -> {
-                val liveCashShop: List<String> = getCashShopNames(listOf(1, 2)).map { "$it(운영중)" }
-                val deadCashShop: List<String> = getCashShopNames(listOf(3)).map { "$it(삭제됨)" }
-                liveCashShop.plus(deadCashShop.toTypedArray())
+                val openCashShop: List<String> = getCashShopNames(listOf(1)).map { "$it(닫힘)" }
+                val closeCashShop: List<String> = getCashShopNames(listOf(2)).map { "$it(오픈)" }
+                val deleteCashShop: List<String> = getCashShopNames(listOf(3)).map { "$it(삭제됨)" }
+                openCashShop.plus(closeCashShop.toTypedArray()).plus(deleteCashShop.toTypedArray())
             }
 
             "오픈" -> {
                 getCashShopNames(listOf(1))
+            }
+
+            "닫기" -> {
+                getCashShopNames(listOf(2))
             }
 
             else -> {
@@ -120,6 +126,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
             message.append("/캐시샵 목록 <샵이름>: 캐시샵 목록과 각 캐시샵에 등록된 아이템 목록을 출력").append("\n")
             message.append("    : 삭제된 캐시샵도 목록에 포함됨").append("\n")
             message.append("/캐시샵 오픈 <샵이름> : 샵 오픈").append("\n")
+            message.append("/캐시샵 닫힘 <샵이름>: 캐시샵을 임시로 닫음").append("\n")
 
             sender.sendMessage(message.toString())
             return false
@@ -277,7 +284,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                     return false
                 }
 
-                val cashShopName = args[1].replace("(운영중)", "").replace("(삭제됨)", "")
+                val cashShopName = args[1].replace("(닫힘)", "").replace("(오픈)", "").replace("(삭제됨)", "")
                 val sql1 = "select id from cash_shop where name = '$cashShopName';"
                 val result1 = DatabaseManager.select(sql1)!!
                 if (!result1.next()){
@@ -323,7 +330,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 }
 
                 val cashShopName = args[1]
-                val sql1 = "select id from cash_shop where name = '$cashShopName';"
+                val sql1 = "select id from cash_shop where name = '$cashShopName' and state = 1;"
                 val result1 = DatabaseManager.select(sql1)!!
 
                 if (!result1.next()){
@@ -341,6 +348,33 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 }
 
                 sender.sendMessage("$cashShopName 캐시샵이 오픈되었습니다.")
+            }
+
+            "닫힘" -> {
+                if (args.size != 2){
+                    sender.sendMessage("명령어 사용법: /캐시샵 닫힘 <샵이름>: 캐시샵을 임시로 닫음")
+                    return false
+                }
+
+                val cashShopName = args[1]
+                val sql1 = "select id from cash_shop where name = '$cashShopName' and state = 2;"
+                val result1 = DatabaseManager.select(sql1)!!
+
+                if (!result1.next()){
+                    sender.sendMessage("#Error 캐시샵 오픈 실패: $cashShopName 존재하지 않는 상점명")
+                    return false
+                }
+                val cashShopId = result1.getInt("id")
+
+                val sql2 = "update cash_shop set state = 1 where id = $cashShopId and state = 2;"
+                val result2 = DatabaseManager.update(sql2)
+
+                if (!result2){
+                    sender.sendMessage("#Error 캐시샵 닫기 실패: $cashShopName DB에러")
+                    return false
+                }
+
+                sender.sendMessage("$cashShopName 캐시샵을 닫았습니다.")
             }
 
             else -> {

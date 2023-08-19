@@ -10,7 +10,7 @@ class MileageShopCommand(): CommandExecutor, TabCompleter {
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>?): List<String> {
         if (args!!.size == 1) {
-            return listOf("생성", "삭제", "진열", "아이템삭제", "목록", "오픈")
+            return listOf("생성", "삭제", "진열", "아이템삭제", "목록", "오픈", "닫기")
         }
         return when (args[0]) {
             "생성"-> {
@@ -76,13 +76,18 @@ class MileageShopCommand(): CommandExecutor, TabCompleter {
             }
 
             "목록" -> {
-                val liveMileageShop: List<String> = getMileageShopNames(listOf(1, 2)).map { "$it(운영중)" }
-                val deadMileageShop: List<String> = getMileageShopNames(listOf(3)).map { "$it(삭제됨)" }
-                liveMileageShop.plus(deadMileageShop.toTypedArray())
+                val openMileageShop: List<String> = getMileageShopNames(listOf(1)).map { "$it(닫힘)" }
+                val closeMileageShop: List<String> = getMileageShopNames(listOf(2)).map { "$it(오픈)" }
+                val deleteMileageShop: List<String> = getMileageShopNames(listOf(3)).map { "$it(삭제됨)" }
+                openMileageShop.plus(closeMileageShop.toTypedArray()).plus(deleteMileageShop.toTypedArray())
             }
 
             "오픈" -> {
                 getMileageShopNames(listOf(1))
+            }
+
+            "닫기" -> {
+                getMileageShopNames(listOf(2))
             }
 
             else -> {
@@ -121,6 +126,7 @@ class MileageShopCommand(): CommandExecutor, TabCompleter {
             message.append("/마일리지샵 목록 <샵이름>: 마일리지샵 목록과 각 마일리지샵에 등록된 아이템 목록을 출력").append("\n")
             message.append("    : 삭제된 마일리지샵도 목록에 포함됨").append("\n")
             message.append("/마일리지샵 오픈 <샵이름> : 샵 오픈").append("\n")
+            message.append("/마일리지샵 닫힘 <샵이름>: 마일리지샵을 임시로 닫음").append("\n")
 
             sender.sendMessage(message.toString())
             return false
@@ -278,7 +284,7 @@ class MileageShopCommand(): CommandExecutor, TabCompleter {
                     return false
                 }
 
-                val mileageShopName = args[1].replace("(운영중)", "").replace("(삭제됨)", "")
+                val mileageShopName = args[1].replace("(닫힘)", "").replace("(오픈)", "").replace("(삭제됨)", "")
                 val sql1 = "select id from mileage_shop where name = '$mileageShopName';"
                 val result1 = DatabaseManager.select(sql1)!!
                 if (!result1.next()){
@@ -324,7 +330,7 @@ class MileageShopCommand(): CommandExecutor, TabCompleter {
                 }
 
                 val mileageShopName = args[1]
-                val sql1 = "select id from mileage_shop where name = '$mileageShopName';"
+                val sql1 = "select id from mileage_shop where name = '$mileageShopName' and state = 1;"
                 val result1 = DatabaseManager.select(sql1)!!
 
                 if (!result1.next()){
@@ -342,6 +348,33 @@ class MileageShopCommand(): CommandExecutor, TabCompleter {
                 }
 
                 sender.sendMessage("$mileageShopName 마일리지샵이 오픈되었습니다.")
+            }
+
+            "닫힘" -> {
+                if (args.size != 2){
+                    sender.sendMessage("명령어 사용법: /마일리지샵 닫힘 <샵이름>: 마일리지샵을 임시로 닫음")
+                    return false
+                }
+
+                val mileageShopName = args[1]
+                val sql1 = "select id from mileage_shop where name = '$mileageShopName' and state = 2;"
+                val result1 = DatabaseManager.select(sql1)!!
+
+                if (!result1.next()){
+                    sender.sendMessage("#Error 마일리지샵 오픈 실패: $mileageShopName 존재하지 않는 상점명")
+                    return false
+                }
+                val mileageShopId = result1.getInt("id")
+
+                val sql2 = "update mileage_shop set state = 1 where id = $mileageShopId and state = 2;"
+                val result2 = DatabaseManager.update(sql2)
+
+                if (!result2){
+                    sender.sendMessage("#Error 마일리지샵 닫기 실패: $mileageShopName DB에러")
+                    return false
+                }
+
+                sender.sendMessage("$mileageShopName 마일리지샵을 닫았습니다.")
             }
 
             else -> {
