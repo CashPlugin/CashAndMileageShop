@@ -126,7 +126,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
             message.append("/캐시샵 목록 <샵이름>: 캐시샵 목록과 각 캐시샵에 등록된 아이템 목록을 출력").append("\n")
             message.append("    : 삭제된 캐시샵도 목록에 포함됨").append("\n")
             message.append("/캐시샵 오픈 <샵이름> : 샵 오픈").append("\n")
-            message.append("/캐시샵 닫힘 <샵이름>: 캐시샵을 임시로 닫음").append("\n")
+            message.append("/캐시샵 닫기 <샵이름>: 캐시샵을 임시로 닫음").append("\n")
 
             sender.sendMessage(message.toString())
             return false
@@ -350,9 +350,9 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 sender.sendMessage("$cashShopName 캐시샵이 오픈되었습니다.")
             }
 
-            "닫힘" -> {
+            "닫기" -> {
                 if (args.size != 2){
-                    sender.sendMessage("명령어 사용법: /캐시샵 닫힘 <샵이름>: 캐시샵을 임시로 닫음")
+                    sender.sendMessage("명령어 사용법: /캐시샵 닫기 <샵이름>: 캐시샵을 임시로 닫음")
                     return false
                 }
 

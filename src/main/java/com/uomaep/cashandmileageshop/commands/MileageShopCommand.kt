@@ -126,7 +126,7 @@ class MileageShopCommand(): CommandExecutor, TabCompleter {
             message.append("/마일리지샵 목록 <샵이름>: 마일리지샵 목록과 각 마일리지샵에 등록된 아이템 목록을 출력").append("\n")
             message.append("    : 삭제된 마일리지샵도 목록에 포함됨").append("\n")
             message.append("/마일리지샵 오픈 <샵이름> : 샵 오픈").append("\n")
-            message.append("/마일리지샵 닫힘 <샵이름>: 마일리지샵을 임시로 닫음").append("\n")
+            message.append("/마일리지샵 닫기 <샵이름>: 마일리지샵을 임시로 닫음").append("\n")
 
             sender.sendMessage(message.toString())
             return false
@@ -350,9 +350,9 @@ class MileageShopCommand(): CommandExecutor, TabCompleter {
                 sender.sendMessage("$mileageShopName 마일리지샵이 오픈되었습니다.")
             }
 
-            "닫힘" -> {
+            "닫기" -> {
                 if (args.size != 2){
-                    sender.sendMessage("명령어 사용법: /마일리지샵 닫힘 <샵이름>: 마일리지샵을 임시로 닫음")
+                    sender.sendMessage("명령어 사용법: /마일리지샵 닫기 <샵이름>: 마일리지샵을 임시로 닫음")
                     return false
                 }
 
