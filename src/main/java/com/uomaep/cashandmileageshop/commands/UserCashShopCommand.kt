@@ -26,7 +26,7 @@ class UserCashShopCommand: CommandExecutor {
         }
 
         val shopName = args[0]
-        val sql = "SELECT * FROM cash_shop WHERE name = '${shopName}'"
+        val sql = "SELECT * FROM cash_shop WHERE name = '${shopName}' and state = 2"
         val result = DatabaseManager.select(sql)!!
 
         if (!result.next()) {
@@ -48,7 +48,7 @@ class UserCashShopCommand: CommandExecutor {
 
 fun openCashShop(sender: CommandSender, cashShopDTO: CashShopDTO) {
     val cashShop = Bukkit.createInventory(sender as InventoryHolder, cashShopDTO.lineNum * 9, cashShopDTO.name)
-    val sql = "select * from (select * from cash_item where cash_shop_id = ${cashShopDTO.id}) as cashItems join item on item.id = cashItems.item_id"
+    val sql = "select * from (select * from cash_item where cash_shop_id = ${cashShopDTO.id} and state = 1) as cashItems join item on item.id = cashItems.item_id"
     val result = DatabaseManager.select(sql)!!
 
     while (result.next()) {
@@ -65,7 +65,6 @@ fun openCashShop(sender: CommandSender, cashShopDTO: CashShopDTO) {
             name = result.getString("name")
         )
         val item: ItemStack = ItemUtil.deserialize(cashItemDTO.itemInfo)
-        println(item)
         cashShop.setItem(cashItemDTO.slotNum, item)
     }
 
