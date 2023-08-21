@@ -9,13 +9,18 @@ import com.uomaep.kotlintestplugin.command.CashShopCommand
 import com.uomaep.kotlintestplugin.command.MileageShopCommand
 import com.uomaep.mileageandmileageshop.commands.MileageCommand
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.File
 
 class Main : JavaPlugin() {
+    companion object {
+        var pluginFolder: File? = null
+    }
+
     override fun onEnable() {
         // Plugin startup logic
         createPluginFolder()
 
-        DatabaseManager.connect()
+        connectDB()
 
         // 명령어 등록
         getCommand("캐시")?.setExecutor(CashCommand())
@@ -26,7 +31,7 @@ class Main : JavaPlugin() {
         getCommand("마일리지샵")?.setExecutor(MileageShopCommand())
 
         // 이벤트 등록
-        server.pluginManager.registerEvents(SetUserAtFirstJoin(this), this)
+        server.pluginManager.registerEvents(SetUserAtFirstJoin(), this)
     }
 
     override fun onDisable() {
@@ -36,9 +41,22 @@ class Main : JavaPlugin() {
     }
 
     fun createPluginFolder() {
-        val pluginFolder = dataFolder
-        if (!pluginFolder.exists()) {
-            pluginFolder.mkdir()
+        if(pluginFolder == null) {
+            val folder = dataFolder
+            if (!folder.exists()) {
+                folder.mkdir()
+            }
+            pluginFolder = folder
+        }
+    }
+
+    fun connectDB() {
+        if(DatabaseManager.connect()) {
+            logger.info("데이터베이스 연결에 성공했습니다.")
+        } else {
+            logger.severe("데이터베이스 연결에 실패했습니다.")
+            logger.severe("플러그인을 종료합니다.")
+            server.pluginManager.disablePlugin(this)
         }
     }
 }

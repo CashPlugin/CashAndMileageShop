@@ -7,14 +7,24 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.SQLException
-import java.util.Properties
+import java.util.*
 import java.util.logging.Level
 
 object DatabaseManager {
     private var con: Connection? = null
 
-    fun connect() {
-        val properties = loadDatabaseProperties()
+    fun connect(): Boolean {
+        var properties: Properties? = null
+        try {
+            properties = PropertieManager.getDatabaseProperties()
+        } catch (e: NullPointerException) {
+            Bukkit.getLogger().severe(e.message)
+            return false
+        } catch (e: Exception) {
+            Bukkit.getLogger().severe(e.message)
+            return false
+        }
+
         val url = properties.getProperty("db.url")
         val user = properties.getProperty("db.user")
         val password = properties.getProperty("db.password")
@@ -24,9 +34,13 @@ object DatabaseManager {
             con = DriverManager.getConnection(url, user, password)
         } catch (e: ClassNotFoundException) {
             e.printStackTrace()
+            return false
         } catch (e: SQLException) {
             e.printStackTrace()
+            return false
         }
+
+        return true
     }
 
     fun disconnect() {

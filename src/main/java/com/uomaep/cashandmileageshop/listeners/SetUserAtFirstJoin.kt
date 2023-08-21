@@ -1,5 +1,6 @@
 package com.uomaep.cashandmileageshop.listeners
 
+import com.uomaep.cashandmileageshop.Main
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
@@ -7,12 +8,11 @@ import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
-import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 import java.io.IOException
 import java.time.LocalDateTime
 
-class SetUserAtFirstJoin(val plugin: JavaPlugin): Listener {
+class SetUserAtFirstJoin: Listener {
 
     @EventHandler
     fun setUserToDatabase(e: PlayerJoinEvent) {
@@ -33,7 +33,7 @@ class SetUserAtFirstJoin(val plugin: JavaPlugin): Listener {
 
     private fun saveFailedUserDataToFile(player: Player): Boolean {
         val fileName = "failedUserData.yml"
-        val configFile = File(plugin.dataFolder, fileName)
+        val configFile = File(Main.pluginFolder, fileName)
         var config:  YamlConfiguration
 
         if (configFile.exists()) {
