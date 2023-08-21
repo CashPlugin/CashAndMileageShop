@@ -19,6 +19,10 @@ class SetUserAtFirstJoin(val plugin: JavaPlugin): Listener {
         val player = e.player
         if(player.hasPlayedBefore()) return
 
+        insertUserDataToDatabase(player)
+    }
+
+    private fun insertUserDataToDatabase(player: Player) {
         if(!DatabaseManager.insert("insert into user (uuid, cash, mileage) values ('${player.uniqueId}', 0, 0);")) {
             Bukkit.getLogger().severe("데이터베이스에 새로운 플레이어의 정보를 추가하는데 실패했습니다.")
             if(!saveFailedUserDataToFile(player)) {
