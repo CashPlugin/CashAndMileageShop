@@ -20,14 +20,7 @@ class Main : JavaPlugin() {
     override fun onEnable() {
         // Plugin startup logic
         createPluginFolder()
-
-        if(DatabaseManager.connect()) {
-            Message.successfulLogMessage("데이터베이스 연결에 성공했습니다.")
-        } else {
-            Message.failureLogMessage("데이터베이스 연결에 실패했습니다.")
-            Message.failureLogMessage("플러그인을 종료합니다.")
-            server.pluginManager.disablePlugin(this)
-        }
+        connectDB()
 
         // 명령어 등록
         getCommand("캐시")?.setExecutor(CashCommand())
@@ -47,13 +40,23 @@ class Main : JavaPlugin() {
         DatabaseManager.disconnect()
     }
 
-    fun createPluginFolder() {
+    private fun createPluginFolder() {
         if(pluginFolder == null) {
             val folder = dataFolder
             if (!folder.exists()) {
                 folder.mkdir()
             }
             pluginFolder = folder
+        }
+    }
+
+    private fun connectDB() {
+        if(DatabaseManager.connect()) {
+            Message.successfulLogMessage("데이터베이스 연결에 성공했습니다.")
+        } else {
+            Message.failureLogMessage("데이터베이스 연결에 실패했습니다.")
+            Message.failureLogMessage("플러그인을 종료합니다.")
+            server.pluginManager.disablePlugin(this)
         }
     }
 }
