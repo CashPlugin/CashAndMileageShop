@@ -2,7 +2,7 @@ package com.uomaep.cashandmileageshop.listeners
 
 import com.uomaep.cashandmileageshop.Main
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
-import org.bukkit.Bukkit
+import com.uomaep.cashandmileageshop.utils.Message
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
@@ -24,9 +24,9 @@ class SetUserAtFirstJoin: Listener {
 
     private fun insertUserDataToDatabase(player: Player) {
         if(!DatabaseManager.insert("insert into user (uuid, cash, mileage) values ('${player.uniqueId}', 0, 0);")) {
-            Bukkit.getLogger().severe("데이터베이스에 새로운 플레이어의 정보를 추가하는데 실패했습니다.")
+            Message.failureLogMessage("데이터베이스에 새로운 플레이어의 정보를 추가하는데 실패했습니다.")
             if(!saveFailedUserDataToFile(player)) {
-                Bukkit.getLogger().severe("플레이어의 정보를 파일에 저장하는데 실패했습니다.")
+                Message.failureLogMessage("플레이어의 정보를 파일에 저장하는데 실패했습니다.")
             }
         }
     }

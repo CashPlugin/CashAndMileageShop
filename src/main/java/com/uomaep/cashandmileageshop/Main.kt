@@ -5,6 +5,7 @@ import com.uomaep.cashandmileageshop.commands.SetItemCommand
 import com.uomaep.cashandmileageshop.commands.UUIDCommand
 import com.uomaep.cashandmileageshop.listeners.SetUserAtFirstJoin
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
+import com.uomaep.cashandmileageshop.utils.Message
 import com.uomaep.kotlintestplugin.command.CashShopCommand
 import com.uomaep.kotlintestplugin.command.MileageShopCommand
 import com.uomaep.mileageandmileageshop.commands.MileageCommand
@@ -20,7 +21,13 @@ class Main : JavaPlugin() {
         // Plugin startup logic
         createPluginFolder()
 
-        connectDB()
+        if(DatabaseManager.connect()) {
+            Message.successfulLogMessage("데이터베이스 연결에 성공했습니다.")
+        } else {
+            Message.failureLogMessage("데이터베이스 연결에 실패했습니다.")
+            Message.failureLogMessage("플러그인을 종료합니다.")
+            server.pluginManager.disablePlugin(this)
+        }
 
         // 명령어 등록
         getCommand("캐시")?.setExecutor(CashCommand())
@@ -47,16 +54,6 @@ class Main : JavaPlugin() {
                 folder.mkdir()
             }
             pluginFolder = folder
-        }
-    }
-
-    fun connectDB() {
-        if(DatabaseManager.connect()) {
-            logger.info("데이터베이스 연결에 성공했습니다.")
-        } else {
-            logger.severe("데이터베이스 연결에 실패했습니다.")
-            logger.severe("플러그인을 종료합니다.")
-            server.pluginManager.disablePlugin(this)
         }
     }
 }
