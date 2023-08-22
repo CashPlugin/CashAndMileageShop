@@ -5,6 +5,7 @@ import com.uomaep.cashandmileageshop.commands.SetItemCommand
 import com.uomaep.cashandmileageshop.commands.UUIDCommand
 import com.uomaep.cashandmileageshop.commands.UserCashShopCommand
 import com.uomaep.cashandmileageshop.listeners.SetUserAtFirstJoin
+import com.uomaep.cashandmileageshop.listeners.ShopItemClickEvent
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.Message
 import com.uomaep.kotlintestplugin.command.CashShopCommand
@@ -35,6 +36,7 @@ class Main : JavaPlugin() {
 
         // 이벤트 등록
         server.pluginManager.registerEvents(SetUserAtFirstJoin(), this)
+        server.pluginManager.registerEvents(ShopItemClickEvent(), this)
     }
 
     override fun onDisable() {

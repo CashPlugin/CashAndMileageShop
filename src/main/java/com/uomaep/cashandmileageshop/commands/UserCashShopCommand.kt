@@ -1,17 +1,12 @@
 package com.uomaep.cashandmileageshop.commands
 
-import com.uomaep.cashandmileageshop.DTO.CashItemDTO
 import com.uomaep.cashandmileageshop.DTO.CashShopDTO
+import com.uomaep.cashandmileageshop.guis.CashShopGUI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
-import com.uomaep.kotlintestplugin.utils.ItemUtil
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
-import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
-import org.bukkit.inventory.InventoryHolder
-import org.bukkit.inventory.ItemStack
 
 class UserCashShopCommand: CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>?): Boolean {
@@ -41,33 +36,8 @@ class UserCashShopCommand: CommandExecutor {
             result.getInt("state")
         )
 
-        openCashShop(sender, cashShopDTO)
+        val cashShopGUI = CashShopGUI(cashShopDTO)
+        (sender as Player).openInventory(cashShopGUI.inventory)
         return true
     }
-}
-
-fun openCashShop(sender: CommandSender, cashShopDTO: CashShopDTO) {
-    val cashShop = Bukkit.createInventory(sender as InventoryHolder, cashShopDTO.lineNum * 9, cashShopDTO.name)
-    val sql = "select * from (select * from cash_item where cash_shop_id = ${cashShopDTO.id} and state = 1) as cashItems join item on item.id = cashItems.item_id"
-    val result = DatabaseManager.select(sql)!!
-
-    while (result.next()) {
-        val cashItemDTO = CashItemDTO(
-            cashItemId = result.getInt("cashItems.id"),
-            maxBuyableCnt = result.getInt("max_buyable_cnt"),
-            price = result.getInt("price"),
-            itemId = result.getInt("item_id"),
-            cashShopId = result.getInt("cash_shop_id"),
-            maxBuyableCntServer = result.getInt("max_buyable_cnt_server"),
-            slotNum = result.getInt("slot_num"),
-            state = result.getInt("state"),
-            itemInfo = result.getString("\u202Aitem_info"),
-            name = result.getString("name")
-        )
-        val item: ItemStack = ItemUtil.deserialize(cashItemDTO.itemInfo)
-        cashShop.setItem(cashItemDTO.slotNum, item)
-    }
-
-    val player = sender as Player
-    player.openInventory(cashShop)
 }

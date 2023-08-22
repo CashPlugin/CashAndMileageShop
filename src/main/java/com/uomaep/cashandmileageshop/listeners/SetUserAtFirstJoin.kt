@@ -6,6 +6,7 @@ import com.uomaep.cashandmileageshop.utils.Message
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
 import java.io.File
@@ -14,7 +15,7 @@ import java.time.LocalDateTime
 
 class SetUserAtFirstJoin: Listener {
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     fun setUserToDatabase(e: PlayerJoinEvent) {
         val player = e.player
         if(player.hasPlayedBefore()) return

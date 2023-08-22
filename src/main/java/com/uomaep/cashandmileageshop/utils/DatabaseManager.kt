@@ -18,10 +18,10 @@ object DatabaseManager {
         try {
             properties = PropertieManager.getDatabaseProperties()
         } catch (e: NullPointerException) {
-            Bukkit.getLogger().severe(e.message)
+            Message.failureLogMessage(e.message ?: "알 수 없는 오류가 떴습니다.")
             return false
         } catch (e: Exception) {
-            Bukkit.getLogger().severe(e.message)
+            Message.failureLogMessage(e.message ?: "알 수 없는 오류가 떴습니다.")
             return false
         }
 
