@@ -36,7 +36,7 @@ class UserCashShopCommand: CommandExecutor {
             result.getInt("state")
         )
 
-        val cashShopGUI = CashShopGUI(cashShopDTO)
+        val cashShopGUI = CashShopGUI(cashShopDTO, sender)
         (sender as Player).openInventory(cashShopGUI.inventory)
         return true
     }

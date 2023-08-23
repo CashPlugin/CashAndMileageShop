@@ -1,5 +1,6 @@
 package com.uomaep.cashandmileageshop.guis
 
+import com.hj.rpgsharp.rpg.apis.rpgsharp.RPGSharpAPI
 import com.uomaep.cashandmileageshop.DTO.CashItemDTO
 import com.uomaep.cashandmileageshop.DTO.CashShopDTO
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
@@ -8,6 +9,8 @@ import com.uomaep.kotlintestplugin.utils.ItemUtil
 import net.kyori.adventure.text.Component
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.Bukkit
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
@@ -16,7 +19,7 @@ class CashShopGUI: InventoryHolder {
     val name: String
     private val inventory: Inventory
 
-    constructor(cashShopDTO: CashShopDTO) {
+    constructor(cashShopDTO: CashShopDTO, sender: CommandSender) {
         this.name = cashShopDTO.name
         this.inventory = Bukkit.createInventory(this, cashShopDTO.lineNum * 9, name)
 
@@ -53,11 +56,24 @@ class CashShopGUI: InventoryHolder {
             )
             if (cashItemDTO.maxBuyableCnt != -1){
                 //로그 뒤져서 남은 구매가능 횟수
-                infoLore.add("§f구매 가능 횟수: §e여기에 남은 횟수/${cashItemDTO.maxBuyableCnt}")
+                val uuid = (sender as Player).uniqueId
+                val sql = "select count(*) cnt from cash_log where user_id = (select id from user where uuid = '${uuid}') " +
+                        "and cash_shop_id = ${cashItemDTO.cashShopId} and cash_item_id = ${cashItemDTO.cashItemId};"
+                val result = DatabaseManager.select(sql)!!
+
+                result.next()
+                val curBuyCnt = result.getInt("cnt")
+                infoLore.add("§f구매 가능 횟수: §e${cashItemDTO.maxBuyableCnt - curBuyCnt}/${cashItemDTO.maxBuyableCnt}")
             }
             if (cashItemDTO.maxBuyableCntServer != -1){
-                //여기도
-                infoLore.add("§f한정판매: §e남은 수량/${cashItemDTO.maxBuyableCntServer}")
+                val sql = "select count(*) cnt from cash_log where " +
+                        "cash_shop_id = ${cashItemDTO.cashShopId} and cash_item_id = ${cashItemDTO.cashItemId};"
+                val result = DatabaseManager.select(sql)!!
+
+                result.next()
+                val curServerBuyCnt = result.getInt("cnt")
+
+                infoLore.add("§f한정판매: §e${cashItemDTO.maxBuyableCntServer - curServerBuyCnt}/${cashItemDTO.maxBuyableCntServer}")
             }
 
             infoLore.add("")
