@@ -41,11 +41,6 @@ class CashShopGUI: InventoryHolder {
                 name = result.getString("name")
             )
             val item: ItemStack = ItemUtil.deserialize(cashItemDTO.itemInfo)
-//            val lore = (item.itemMeta.lore() ?: listOf<String>()) as List<String>
-//            val newLore = listOf("가격: ${cashItemDTO.price}")
-//            val x = lore.plus(newLore)
-//            Message.failureLogMessage("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\\n$x\\n@@@@@@@@@@@@@@@@@")
-//            item.itemMeta.lore = x
 
             val lore = item.itemMeta.lore ?: mutableListOf()
             val infoLore = mutableListOf(
