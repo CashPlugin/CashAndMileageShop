@@ -18,13 +18,18 @@ class ShopItemClickEvent: Listener {
             return
         }
 
-        val inventoryHolder = e.inventory.holder!!
+        val inventoryHolder = e.inventory.holder ?: return
         //캐시샵을 클릭한 것이 아님 -> 리스너가 작동하지 않아야 함.
         if (inventoryHolder !is CashShopGUI){
             return
         }
 
-        val clickedInventoryHolder = e.clickedInventory?.holder!!
+        //gui밖을 클릭한 경우
+        val clickedInventoryHolder = e.clickedInventory?.holder ?: run {
+            e.isCancelled = true
+            return
+        }
+
         //클릭한 홀더가 유저의 것인지 상점인지 확인
         if(clickedInventoryHolder is CashShopGUI) {//구매 로직
             val currentItem = e.currentItem
