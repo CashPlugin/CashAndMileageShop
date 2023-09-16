@@ -3,10 +3,7 @@ package com.uomaep.cashandmileageshop.utils
 import org.bukkit.Bukkit
 import java.io.IOException
 import java.io.InputStream
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.ResultSet
-import java.sql.SQLException
+import java.sql.*
 import java.util.*
 import java.util.logging.Level
 
@@ -69,6 +66,29 @@ object DatabaseManager {
         return true
     }
 
+    fun insertAndGetGeneratedKey(statement: String): Long? {
+        val con = getConnection()
+        if (con != null) {
+            try {
+                val preparedStatement = con.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)
+                preparedStatement.executeUpdate()
+
+                val generatedKeys = preparedStatement.generatedKeys
+                if (generatedKeys.next()) {
+                    return generatedKeys.getLong(1)
+                }
+            } catch (e: SQLException) {
+                Bukkit.getLogger().log(Level.SEVERE, "Error during INSERT operation", e)
+            }
+        } else {
+            Bukkit.getLogger().severe("Connection is null")
+            return -1
+        }
+        return -1
+    }
+
+
+
     fun select(statement: String): ResultSet? {
         val con = getConnection()
         if (con != null) {
@@ -91,6 +111,22 @@ object DatabaseManager {
                 con.prepareStatement(statement).executeUpdate()
             } catch (e: SQLException) {
                 Bukkit.getLogger().log(Level.SEVERE, "Error during UPDATE operation", e)
+                return false
+            }
+        } else {
+            Bukkit.getLogger().severe("Connection is null")
+            return false
+        }
+        return true
+    }
+
+    fun delete(statement: String): Boolean {
+        val con = getConnection()
+        if (con != null) {
+            try {
+                con.prepareStatement(statement).execute()
+            } catch (e: SQLException) {
+                Bukkit.getLogger().log(Level.SEVERE, "Error during DELETE operation", e)
                 return false
             }
         } else {

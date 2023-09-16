@@ -10,10 +10,14 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
+import java.util.*
+import javax.xml.crypto.Data
 
 class ShopItemClickEvent: Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onShopItemClick(e: InventoryClickEvent) {
+        val player = e.whoClicked
+
         if (e.isCancelled){
             return
         }
@@ -39,8 +43,8 @@ class ShopItemClickEvent: Listener {
                 return
             }
 
-            if (e.whoClicked.inventory.firstEmpty()==-1){
-                e.whoClicked.sendMessage("[캐시상점]: 인벤토리가 가득 찼습니다.")
+            if (player.inventory.firstEmpty()==-1){
+                player.sendMessage("[캐시상점]: 인벤토리가 가득 찼습니다.")
                 e.isCancelled = true
                 return
             }
@@ -88,7 +92,7 @@ class ShopItemClickEvent: Listener {
             )
 
             //유저 정보 가져오기
-            val uuid = e.whoClicked.uniqueId
+            val uuid = player.uniqueId
             val sql1 = "select * from user where uuid = '$uuid';"
             val result1 = DatabaseManager.select(sql1)!!
 
@@ -104,30 +108,58 @@ class ShopItemClickEvent: Listener {
                 cash = result1.getInt("cash"),
                 mileage = result1.getInt("mileage")
             )
-
             if (user.cash >= cashItemDTO.price){
-                //서버 구매 가능 횟수 확인
-                //개인 구매 가능 횟수 확인
-                //존나 골치 아프네
+                var logId: Long
+
+                synchronized(this){
+
+                    if(cashItemDTO.maxBuyableCntServer == -1 && cashItemDTO.maxBuyableCnt != -1) {
+                        // 서버 수량 제한 X, 개인 수량 제한 O
+                        if(cashItemDTO.maxBuyableCnt <= getUserBuyCnt(uuid, cashItemDTO)) {
+                            // 구매 불가
+                            player.sendMessage("[캐시상점]: 구매횟수초과")
+                            e.isCancelled = true
+                            return
+                        }
+                    }
+                    else if(cashItemDTO.maxBuyableCntServer !=-1 && cashItemDTO.maxBuyableCnt == -1) {
+                        // 서버 수량 제한 O, 개인 수량 제한 X
+                        if(cashItemDTO.maxBuyableCntServer <= getServerBuyCnt(cashItemDTO)) {
+                            player.sendMessage("[캐시상점]: 구매횟수초과")
+                            e.isCancelled = true
+                            return
+                        }
+                    }
+                    else if(cashItemDTO.maxBuyableCntServer !=-1 && cashItemDTO.maxBuyableCnt != -1) {
+                        // 서버 수량 제한 O, 개인 수량 제한 O
+                        if(cashItemDTO.maxBuyableCntServer <= getServerBuyCnt(cashItemDTO) ||
+                            cashItemDTO.maxBuyableCnt <= getUserBuyCnt(uuid, cashItemDTO)) {
+                            player.sendMessage("[캐시상점]: 구매횟수초과")
+                            e.isCancelled = true
+                            return
+                        }
+                    }
+
+                    logId = itemLogging(user.id, cashItemDTO.cashItemId, cashItemDTO.cashShopId, e)
+                }
+                //캐시 로그에 기록
 
                 //유저의 캐시 차감
                 val sql4 = "update user set cash = cash - ${cashItemDTO.price} where uuid = '${user.uuid}';"
                 val result4 = DatabaseManager.update(sql4)
                 if (!result4){
                     println("[캐시상점]: 캐시 차감에 실패했습니다.")
+                    //실패시 로그 삭제
+                    DatabaseManager.delete("delete from cash_log where id = ${logId};")
+                    e.isCancelled = true
+                    return
                 }
-                //캐시 로그에 기록
-                val sql5 = "insert into cash_log (user_id, cash_item_id, purchase_at, cash_shop_id) " +
-                        "values (${user.id}, ${cashItemDTO.cashItemId}, NOW(), ${cashShopDTO.id});"
-                val result5 = DatabaseManager.insert(sql5)
-                if (!result5){
-                    println("[캐시상점]: 캐시 로그에 기록에 실패했습니다.")
-                }
+
                 //아이템 지급
-                e.whoClicked.inventory.addItem(ItemUtil.deserialize(cashItemDTO.itemInfo))
+                player.inventory.addItem(ItemUtil.deserialize(cashItemDTO.itemInfo))
             }
             else{
-                e.whoClicked.sendMessage("[캐시상점]: 캐시가 부족합니다.")
+                player.sendMessage("[캐시상점]: 캐시가 부족합니다.")
             }
 
             e.isCancelled = true
@@ -141,4 +173,34 @@ class ShopItemClickEvent: Listener {
 
         //캐시샵 로직 짜고 e.isCancelled = true 부여
     }
+
+    private fun getServerBuyCnt(cashItemDTO: CashItemDTO): Int {
+        val sql = "select count(*) cnt from cash_log where " +
+                "cash_shop_id = ${cashItemDTO.cashShopId} and cash_item_id = ${cashItemDTO.cashItemId};"
+        val result = DatabaseManager.select(sql)!!
+
+        result.next()
+        return result.getInt("cnt")
+    }
+
+    private fun getUserBuyCnt(uuid: UUID, cashItemDTO: CashItemDTO): Int {
+        val sql = "select count(*) cnt from cash_log where user_id = (select id from user where uuid = '${uuid}') " +
+                "and cash_shop_id = ${cashItemDTO.cashShopId} and cash_item_id = ${cashItemDTO.cashItemId};"
+        val result = DatabaseManager.select(sql)!!
+
+        result.next()
+        return result.getInt("cnt")
+    }
+}
+
+fun itemLogging(userId: Int, itemId: Int, shopId: Int, e: InventoryClickEvent): Long {
+    val statement = "insert into cash_log (user_id, cash_item_id, purchase_at, cash_shop_id) " +
+            "values (${userId}, ${itemId}, NOW(), ${shopId});"
+    val insertedId = DatabaseManager.insertAndGetGeneratedKey(statement)
+    if (insertedId == -1L){
+        println("[캐시상점]: 로깅 실패")
+        e.isCancelled = true
+        return -1
+    }
+    return insertedId!!
 }
