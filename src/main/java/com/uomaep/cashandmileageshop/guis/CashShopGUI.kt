@@ -58,7 +58,7 @@ class CashShopGUI: InventoryHolder {
 
                 result.next()
                 val curBuyCnt = result.getInt("cnt")
-                infoLore.add("§f구매 가능 횟수: §e${cashItemDTO.maxBuyableCnt - curBuyCnt}/${cashItemDTO.maxBuyableCnt}")
+                infoLore.add("§f서버 한정: §e${cashItemDTO.maxBuyableCnt - curBuyCnt}/${cashItemDTO.maxBuyableCnt}")
             }
             if (cashItemDTO.maxBuyableCntServer != -1){
                 val sql = "select count(*) cnt from cash_log where " +
@@ -68,7 +68,7 @@ class CashShopGUI: InventoryHolder {
                 result.next()
                 val curServerBuyCnt = result.getInt("cnt")
 
-                infoLore.add("§f한정판매: §e${cashItemDTO.maxBuyableCntServer - curServerBuyCnt}/${cashItemDTO.maxBuyableCntServer}")
+                infoLore.add("§f개인 한정: §e${cashItemDTO.maxBuyableCntServer - curServerBuyCnt}/${cashItemDTO.maxBuyableCntServer}")
             }
 
             infoLore.add("")
@@ -83,8 +83,6 @@ class CashShopGUI: InventoryHolder {
             item.itemMeta = itemMeta
 
             this.inventory.setItem(cashItemDTO.slotNum, item)
-
-
         }
     }
 

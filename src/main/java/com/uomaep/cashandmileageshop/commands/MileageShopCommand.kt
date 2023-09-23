@@ -6,7 +6,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
-class MileageShopCommand(): CommandExecutor, TabCompleter {
+class MileageShopCommand : CommandExecutor, TabCompleter {
 
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>?): List<String> {
         if (args!!.size == 1) {

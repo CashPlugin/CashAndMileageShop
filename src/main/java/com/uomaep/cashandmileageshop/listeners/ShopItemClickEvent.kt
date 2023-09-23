@@ -6,13 +6,12 @@ import com.uomaep.cashandmileageshop.DTO.UserDTO
 import com.uomaep.cashandmileageshop.guis.CashShopGUI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.kotlintestplugin.utils.ItemUtil
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
+import org.bukkit.inventory.ItemStack
 import java.util.*
-import javax.xml.crypto.Data
 
 class ShopItemClickEvent: Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -158,10 +157,12 @@ class ShopItemClickEvent: Listener {
 
                 //아이템 지급
                 player.inventory.addItem(ItemUtil.deserialize(cashItemDTO.itemInfo))
-                e.inventory.close()
 
-                val cashShopGUI = CashShopGUI(cashShopDTO, player)
-                player.openInventory(cashShopGUI.inventory)
+                //캐시 아이템 정보 다시 가져오기
+                val item: ItemStack = getItemInfoById(cashItemDTO, user.uuid)
+
+                //캐시샵의 구매한 아이템 정보 새로고침
+                e.inventory.setItem(itemSlotNum, item)
             }
             else{
                 player.sendMessage("[캐시상점]: 캐시가 부족합니다.")

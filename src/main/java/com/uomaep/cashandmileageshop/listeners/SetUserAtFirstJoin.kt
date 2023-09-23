@@ -18,9 +18,18 @@ class SetUserAtFirstJoin: Listener {
     @EventHandler(priority = EventPriority.HIGH)
     fun setUserToDatabase(e: PlayerJoinEvent) {
         val player = e.player
-        if(player.hasPlayedBefore()) return
+//        if(player.hasPlayedBefore()) return
+
+        if(isUserDataExist(player)) return
 
         insertUserDataToDatabase(player)
+    }
+
+    private fun isUserDataExist(player: Player): Boolean {
+        val sql = "select * from user where uuid = '${player.uniqueId}';"
+        val result = DatabaseManager.select(sql) ?: return false
+
+        return result.next()
     }
 
     private fun insertUserDataToDatabase(player: Player) {

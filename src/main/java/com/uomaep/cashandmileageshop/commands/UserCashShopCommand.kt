@@ -6,9 +6,25 @@ import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
-class UserCashShopCommand: CommandExecutor {
+class UserCashShopCommand: CommandExecutor, TabCompleter {
+    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>?): List<String> {
+        if (args!!.size == 1) {
+            val sql = "SELECT * FROM cash_shop WHERE state = 2;"
+            val result = DatabaseManager.select(sql)!!
+            val list = mutableListOf<String>()
+
+            while (result.next()) {
+                list.add(result.getString("name"))
+            }
+
+            return list
+        }
+        return listOf()
+    }
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>?): Boolean {
 //        if (sender !is Player) {
 //            sender.sendMessage("비정상적인 접근입니다.")
