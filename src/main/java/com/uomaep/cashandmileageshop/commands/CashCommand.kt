@@ -1,6 +1,5 @@
 package com.uomaep.cashandmileageshop.commands
 
-import com.hj.rpgsharp.rpg.apis.rpgsharp.RPGSharpAPI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -9,6 +8,7 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
 class CashCommand: CommandExecutor, TabCompleter {
+
     companion object {
 
         private fun help(player: Player) {
@@ -91,7 +91,8 @@ class CashCommand: CommandExecutor, TabCompleter {
                 "보기" -> {
                     val nickname = args[1]
                     // val uuid = Bukkit.getOfflinePlayer(nickname).uniqueId.toString()
-                    val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
+//                    val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
+                    val uuid = player.uniqueId.toString()
                     val cash = getCashByUUID(uuid)
 
                     if(cash == -1) {
@@ -116,7 +117,8 @@ class CashCommand: CommandExecutor, TabCompleter {
 
             val nickname = args[1]
             // val uuid = Bukkit.getOfflinePlayer(nickname).uniqueId.toString()
-            val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
+//            val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
+            val uuid = player.uniqueId.toString()
             val balance: Int
 
             try {

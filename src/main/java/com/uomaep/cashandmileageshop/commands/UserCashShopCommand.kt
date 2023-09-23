@@ -10,10 +10,10 @@ import org.bukkit.entity.Player
 
 class UserCashShopCommand: CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>?): Boolean {
-        if (sender !is Player || !sender.isOp) {
-            sender.sendMessage("비정상적인 접근입니다.")
-            return false
-        }
+//        if (sender !is Player) {
+//            sender.sendMessage("비정상적인 접근입니다.")
+//            return false
+//        }
 
         if (args!!.isEmpty()){
             sender.sendMessage("§e/캐시샵열기 <상점이름>")
