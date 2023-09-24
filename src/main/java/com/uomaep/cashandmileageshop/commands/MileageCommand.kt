@@ -1,6 +1,5 @@
 package com.uomaep.mileageandmileageshop.commands
 
-import com.hj.rpgsharp.rpg.apis.rpgsharp.RPGSharpAPI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -91,7 +90,8 @@ class MileageCommand: CommandExecutor, TabCompleter {
                 "보기" -> {
                     val nickname = args[1]
 //                    val uuid = Bukkit.getOfflinePlayer(nickname).uniqueId.toString()
-                    val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
+//                    val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
+                    val uuid = player.uniqueId.toString()
                     val mileage = getMileageByUUID(uuid)
 
                     if(mileage == -1) {
@@ -116,7 +116,8 @@ class MileageCommand: CommandExecutor, TabCompleter {
 
             val nickname = args[1]
 //            val uuid = Bukkit.getOfflinePlayer(nickname).uniqueId.toString()
-            val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
+//            val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
+            val uuid = player.uniqueId.toString()
             val balance: Int
 
             try {

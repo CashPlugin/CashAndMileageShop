@@ -1,6 +1,5 @@
 package com.uomaep.cashandmileageshop.commands
 
-import com.hj.rpgsharp.rpg.apis.rpgsharp.RPGSharpAPI
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -20,7 +19,8 @@ class UUIDCommand: CommandExecutor {
             return false
         }
         val nickname = args[0]
-        val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
+//        val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
+        val uuid = player.uniqueId.toString()
 
         if(uuid == null) {
             player.sendMessage("§e${nickname}§f님의 UUID를 찾을 수 없습니다.")
