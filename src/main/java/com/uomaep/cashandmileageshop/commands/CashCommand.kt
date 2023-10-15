@@ -1,6 +1,7 @@
 package com.uomaep.cashandmileageshop.commands
 
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
+import com.uomaep.cashandmileageshop.utils.UserMessage
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -20,15 +21,7 @@ class CashCommand: CommandExecutor, TabCompleter {
             message.append("§f/캐시 지급 <플레이어> <금액> §7: 해당 플레이어에게 금액만큼의 캐시를 지급합니다.\n")
             message.append("§f/캐시 차감 <플레이어> <금액> §7: 해당 플레이어에게서 금액만큼의 캐시를 차감합니다.\n")
             message.append("§e---------------\n")
-            player.sendMessage(message.toString())
-        }
-
-        fun sendFailMessage(player: Player, message: String) {
-            player.sendMessage("§c[§e$§c] $message")
-        }
-
-        fun sendSuccessMessage(player: Player, message: String) {
-            player.sendMessage("§a[§e$§a] $message")
+            UserMessage.sendSuccessMessage(player, message.toString())
         }
 
         private fun getCashByUUID(uuid: String? = null): Int {
@@ -69,15 +62,15 @@ class CashCommand: CommandExecutor, TabCompleter {
         if(args?.size == 0) {
             val cash = getCashByUUID(player.uniqueId.toString())
             if(cash == -1) {
-                sendFailMessage(player, "캐시를 불러오는 도중 오류가 발생했습니다.")
+                UserMessage.sendFailMessage(player, "캐시를 불러오는 도중 오류가 발생했습니다.")
                 return false
             }
-            sendSuccessMessage(player, "캐시: §a${cash}§f원")
+            UserMessage.sendSuccessMessage(player, "캐시: §a${cash}§f원")
             return true
         }
 
         if(!player.isOp) {
-            sendFailMessage(player, "/캐시 §7- 캐시를 확인합니다.")
+            UserMessage.sendFailMessage(player, "/캐시 §7- 캐시를 확인합니다.")
             return false
         }
 
@@ -96,10 +89,10 @@ class CashCommand: CommandExecutor, TabCompleter {
                     val cash = getCashByUUID(uuid)
 
                     if(cash == -1) {
-                        sendFailMessage(player, "존재하지 않는 플레이어입니다.")
+                        UserMessage.sendFailMessage(player, "존재하지 않는 플레이어입니다.")
                         return false
                     }
-                    sendSuccessMessage(player, "§e${nickname}§f님의 캐시: §a${cash}§f원")
+                    UserMessage.sendSuccessMessage(player, "§e${nickname}§f님의 캐시: §a${cash}§f원")
                     return true
                 }
                 else -> {
@@ -124,32 +117,32 @@ class CashCommand: CommandExecutor, TabCompleter {
             try {
                 balance = args[2].toInt()
                 if(balance < 0) {
-                    sendFailMessage(player, "금액은 0보다 작을 수 없습니다.")
+                    UserMessage.sendFailMessage(player, "금액은 0보다 작을 수 없습니다.")
                     return false
                 }
                 when(args[0]) {
                     "설정" -> {
                         if(!setCashByUUID(uuid, balance)) {
-                            sendFailMessage(player, "캐시를 설정하는 도중 오류가 발생했습니다.")
+                            UserMessage.sendFailMessage(player, "캐시를 설정하는 도중 오류가 발생했습니다.")
                             return false
                         }
-                        sendSuccessMessage(player, "§e${nickname}§f님의 캐시를 §a${balance}§f원으로 설정했습니다.")
+                        UserMessage.sendSuccessMessage(player, "§e${nickname}§f님의 캐시를 §a${balance}§f원으로 설정했습니다.")
                         return true
                     }
                     "지급" -> {
                         if(!addCashByUUID(uuid, balance)) {
-                            sendFailMessage(player, "캐시를 지급하는 도중 오류가 발생했습니다.")
+                            UserMessage.sendFailMessage(player, "캐시를 지급하는 도중 오류가 발생했습니다.")
                             return false
                         }
-                        sendSuccessMessage(player, "§e${nickname}§f님에게 §a${balance}§f원을 지급했습니다.")
+                        UserMessage.sendSuccessMessage(player, "§e${nickname}§f님에게 §a${balance}§f원을 지급했습니다.")
                         return true
                     }
                     "차감" -> {
                         if(!subtractCashByUUID(uuid, balance)) {
-                            sendFailMessage(player, "캐시를 차감하는 도중 오류가 발생했습니다.")
+                            UserMessage.sendFailMessage(player, "캐시를 차감하는 도중 오류가 발생했습니다.")
                             return false
                         }
-                        sendSuccessMessage(player, "§e${nickname}§f님의 캐시에서 §c${balance}§f원을 차감했습니다.")
+                        UserMessage.sendSuccessMessage(player, "§e${nickname}§f님의 캐시에서 §c${balance}§f원을 차감했습니다.")
                         return true
                     }
                     else -> {
@@ -158,10 +151,10 @@ class CashCommand: CommandExecutor, TabCompleter {
                     }
                 }
             } catch (e: NumberFormatException) {
-                sendFailMessage(player, "금액은 숫자로 입력해주세요.")
+                UserMessage.sendFailMessage(player, "금액은 숫자로 입력해주세요.")
                 return false
             } catch (e: Exception) {
-                sendFailMessage(player, "오류가 발생했습니다.")
+                UserMessage.sendFailMessage(player, "오류가 발생했습니다.")
                 return false
             }
         }

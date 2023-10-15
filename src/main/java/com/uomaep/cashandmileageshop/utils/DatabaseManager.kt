@@ -13,7 +13,7 @@ object DatabaseManager {
     fun connect(): Boolean {
         var properties: Properties? = null
         try {
-            properties = PropertieManager.getDatabaseProperties()
+            properties = PropertiesManager.getDatabaseProperties()
         } catch (e: NullPointerException) {
             Message.failureLogMessage(e.message ?: "알 수 없는 오류가 떴습니다.")
             return false
@@ -33,6 +33,9 @@ object DatabaseManager {
             e.printStackTrace()
             return false
         } catch (e: SQLException) {
+            e.printStackTrace()
+            return false
+        } catch (e: Exception) {
             e.printStackTrace()
             return false
         }
