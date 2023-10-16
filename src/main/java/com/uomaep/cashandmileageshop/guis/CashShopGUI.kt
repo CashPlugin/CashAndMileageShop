@@ -17,6 +17,11 @@ import org.bukkit.inventory.ItemStack
 class CashShopGUI: InventoryHolder {
     val name: String
     private val inventory: Inventory
+    companion object{
+        lateinit var PRICE: String
+        lateinit var SERVER_LIMITED: String
+        lateinit var USER_LIMITED: String
+    }
 
     constructor(cashShopDTO: CashShopDTO, sender: CommandSender) {
         this.name = cashShopDTO.name
@@ -46,8 +51,9 @@ class CashShopGUI: InventoryHolder {
                 "",
                 "§7--------------------------------------------",
                 "",
-                "§f가격: §e${cashItemDTO.price} §f캐시"
+                PRICE.replace("%price%", cashItemDTO.price.toString())
             )
+
             if (cashItemDTO.maxBuyableCnt != -1){
                 //로그 뒤져서 남은 구매가능 횟수
                 val uuid = (sender as Player).uniqueId
@@ -57,7 +63,9 @@ class CashShopGUI: InventoryHolder {
 
                 result.next()
                 val curBuyCnt = result.getInt("cnt")
-                infoLore.add("§f서버 한정: §e${cashItemDTO.maxBuyableCnt - curBuyCnt}/${cashItemDTO.maxBuyableCnt}")
+                infoLore.add(SERVER_LIMITED
+                    .replace("%server_remain%", (cashItemDTO.maxBuyableCnt - curBuyCnt).toString())
+                    .replace("%server_purchases_limited%", cashItemDTO.maxBuyableCnt.toString()))
             }
             if (cashItemDTO.maxBuyableCntServer != -1){
                 val sql = "select count(*) cnt from cash_log where " +
@@ -66,8 +74,9 @@ class CashShopGUI: InventoryHolder {
 
                 result.next()
                 val curServerBuyCnt = result.getInt("cnt")
-
-                infoLore.add("§f개인 한정: §e${cashItemDTO.maxBuyableCntServer - curServerBuyCnt}/${cashItemDTO.maxBuyableCntServer}")
+                infoLore.add(USER_LIMITED
+                    .replace("%user_remain%", (cashItemDTO.maxBuyableCntServer - curServerBuyCnt).toString())
+                    .replace("%user_purchases_limited%", cashItemDTO.maxBuyableCntServer.toString()))
             }
 
             infoLore.add("")

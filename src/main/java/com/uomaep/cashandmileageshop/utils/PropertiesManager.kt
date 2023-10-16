@@ -1,11 +1,36 @@
 package com.uomaep.cashandmileageshop.utils
 
 import com.uomaep.cashandmileageshop.Main
+import com.uomaep.cashandmileageshop.guis.CashShopGUI
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 import java.util.*
 
 object PropertiesManager {
+    fun getCustomItemInfoProperties() {
+        val configFile = File(Main.pluginFolder, "config.yml")
+        val config = YamlConfiguration.loadConfiguration(configFile)
+
+        val customItemInfoConfig = config.getConfigurationSection("custom_item_info")
+        if(customItemInfoConfig == null) {
+            val customItemInfoSection = config.createSection("custom_item_info")
+            hashMapOf(
+                "price" to "§f가격: §e%price% §f캐시",
+                "server_limited" to "§f서버 한정: §e%server_remain%/%server_purchases_limited%",
+                "user_limited" to "§f개인 한정: §e%user_remain%/%user_purchases_limited%"
+            ).forEach { (key, value) -> customItemInfoSection.set(key, value) }
+            try {
+                config.save(configFile)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+//            throw IllegalArgumentException("config.yml 파일에 custom_item_info 섹션을 추가해주세요.")
+            return
+        }
+        CashShopGUI.PRICE = customItemInfoConfig.getString("price")!!
+        CashShopGUI.SERVER_LIMITED = customItemInfoConfig.getString("server_limited")!!
+        CashShopGUI.USER_LIMITED = customItemInfoConfig.getString("user_limited")!!
+    }
     fun getServerCustomMessageProperties() {
         val configFile = File(Main.pluginFolder, "config.yml")
         val config = YamlConfiguration.loadConfiguration(configFile)

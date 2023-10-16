@@ -4,6 +4,7 @@ import com.uomaep.cashandmileageshop.commands.CashCommand
 import com.uomaep.cashandmileageshop.commands.SetItemCommand
 import com.uomaep.cashandmileageshop.commands.UUIDCommand
 import com.uomaep.cashandmileageshop.commands.UserCashShopCommand
+import com.uomaep.cashandmileageshop.listeners.PurchaseConfirmationEvent
 import com.uomaep.cashandmileageshop.listeners.SetUserAtFirstJoin
 import com.uomaep.cashandmileageshop.listeners.ShopItemClickEvent
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
@@ -27,6 +28,7 @@ class Main : JavaPlugin() {
         //커스텀 메시지 설정값 가져오기
         PropertiesManager.getServerCustomMessageProperties()
         PropertiesManager.getUserCustomMessageProperties()
+        PropertiesManager.getCustomItemInfoProperties()
 
         //db연결
         connectDB()
@@ -44,6 +46,7 @@ class Main : JavaPlugin() {
         // 이벤트 등록
         server.pluginManager.registerEvents(SetUserAtFirstJoin(), this)
         server.pluginManager.registerEvents(ShopItemClickEvent(), this)
+        server.pluginManager.registerEvents(PurchaseConfirmationEvent(), this)
     }
 
     override fun onDisable() {
