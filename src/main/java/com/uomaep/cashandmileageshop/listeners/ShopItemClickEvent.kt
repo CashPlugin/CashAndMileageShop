@@ -1,33 +1,27 @@
 package com.uomaep.cashandmileageshop.listeners
 
-import com.uomaep.cashandmileageshop.DTO.CashItemDTO
-import com.uomaep.cashandmileageshop.DTO.CashShopDTO
-import com.uomaep.cashandmileageshop.DTO.UserDTO
+import com.uomaep.cashandmileageshop.dto.CashItemDTO
+import com.uomaep.cashandmileageshop.dto.CashShopDTO
 import com.uomaep.cashandmileageshop.guis.CashShopGUI
 import com.uomaep.cashandmileageshop.guis.PurchaseConfirmationGUI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
-import com.uomaep.kotlintestplugin.utils.ItemUtil
-import org.bukkit.entity.HumanEntity
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
-import org.bukkit.inventory.ItemStack
-import java.util.*
 
-class ShopItemClickEvent: Listener {
+class ShopItemClickEvent : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onShopItemClick(e: InventoryClickEvent) {
         val player = e.whoClicked
 
-        if (e.isCancelled){
+        if (e.isCancelled) {
             return
         }
 
         val inventoryHolder = e.inventory.holder ?: return
         //캐시샵을 클릭한 것이 아님 -> 리스너가 작동하지 않아야 함.
-        if (inventoryHolder !is CashShopGUI){
+        if (inventoryHolder !is CashShopGUI) {
             return
         }
 
@@ -38,15 +32,15 @@ class ShopItemClickEvent: Listener {
         }
 
         //클릭한 홀더가 유저의 것인지 상점인지 확인
-        if(clickedInventoryHolder is CashShopGUI) {//구매 로직
+        if (clickedInventoryHolder is CashShopGUI) {//구매 로직
             val currentItem = e.currentItem
-            if (currentItem == null){
+            if (currentItem == null) {
                 println("[캐시상점]: 빈 슬롯을 클릭")
                 e.isCancelled = true
                 return
             }
 
-            if (player.inventory.firstEmpty()==-1){
+            if (player.inventory.firstEmpty() == -1) {
                 player.sendMessage("[캐시상점]: 인벤토리가 가득 찼습니다.")
                 e.isCancelled = true
                 return
@@ -57,7 +51,7 @@ class ShopItemClickEvent: Listener {
 
             val sql3 = "select * from cash_shop where name = '$cashShopName' and state = 2;"
             val result3 = DatabaseManager.select(sql3)!!
-            if (!result3.next()){
+            if (!result3.next()) {
                 println("존재하지 않는 캐시상점입니다.")
             }
 
@@ -70,12 +64,12 @@ class ShopItemClickEvent: Listener {
 
             val sql2 = "select * " +
                     "from (select cash_item.id, max_buyable_cnt, price, item_id, cash_shop_id, max_buyable_cnt_server, slot_num, state " +
-                        "from (select id from cash_shop where name = '$cashShopName') as cashShopId " +
-                        "join cash_item on cash_shop_id = cashShopId.id and slot_num = $itemSlotNum and state = 1) as cashItem " +
+                    "from (select id from cash_shop where name = '$cashShopName') as cashShopId " +
+                    "join cash_item on cash_shop_id = cashShopId.id and slot_num = $itemSlotNum and state = 1) as cashItem " +
                     "join item on item.id = cashItem.item_id;"
             val result2 = DatabaseManager.select(sql2)!!
 
-            if (!result2.next()){
+            if (!result2.next()) {
                 println("존재하지 않는 아이템입니다.")
                 e.isCancelled = true
                 return
@@ -97,8 +91,7 @@ class ShopItemClickEvent: Listener {
             val purchaseConfirmationGUI = PurchaseConfirmationGUI(player, e, cashItemDTO, cashShopDTO, this)
             player.openInventory(purchaseConfirmationGUI.inventory)
             e.isCancelled = true
-        }
-        else{//꼼수 막기
+        } else {//꼼수 막기
             e.isCancelled = true
         }
     }

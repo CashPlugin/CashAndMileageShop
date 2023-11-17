@@ -1,4 +1,4 @@
-package com.uomaep.mileageandmileageshop.commands
+package com.uomaep.cashandmileageshop.commands
 
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import org.bukkit.command.Command

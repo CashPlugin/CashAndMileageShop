@@ -1,7 +1,7 @@
 package com.uomaep.cashandmileageshop.commands
 
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
-import com.uomaep.kotlintestplugin.utils.ItemUtil
+import com.uomaep.cashandmileageshop.utils.ItemUtil
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

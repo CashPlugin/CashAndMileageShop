@@ -1,4 +1,4 @@
-package com.uomaep.cashandmileageshop.DTO
+package com.uomaep.cashandmileageshop.dto
 
 data class CashItemDTO(
     val cashItemId: Int,

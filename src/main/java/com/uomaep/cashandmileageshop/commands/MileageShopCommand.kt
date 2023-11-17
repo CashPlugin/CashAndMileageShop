@@ -1,4 +1,4 @@
-package com.uomaep.kotlintestplugin.command
+package com.uomaep.cashandmileageshop.commands
 
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import org.bukkit.command.Command

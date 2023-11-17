@@ -1,12 +1,9 @@
 package com.uomaep.cashandmileageshop.guis
 
-import com.uomaep.cashandmileageshop.DTO.CashItemDTO
-import com.uomaep.cashandmileageshop.DTO.CashShopDTO
+import com.uomaep.cashandmileageshop.dto.CashItemDTO
+import com.uomaep.cashandmileageshop.dto.CashShopDTO
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
-import com.uomaep.cashandmileageshop.utils.Message
-import com.uomaep.kotlintestplugin.utils.ItemUtil
-import net.kyori.adventure.text.Component
-import net.md_5.bungee.api.chat.TextComponent
+import com.uomaep.cashandmileageshop.utils.ItemUtil
 import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -49,7 +46,7 @@ class CashShopGUI: InventoryHolder {
             val lore = item.itemMeta.lore ?: mutableListOf()
             val infoLore = mutableListOf(
                 "",
-                "§7--------------------------------------------",
+                "§7§m                                                §7",
                 "",
                 PRICE.replace("%price%", cashItemDTO.price.toString())
             )
@@ -80,7 +77,7 @@ class CashShopGUI: InventoryHolder {
             }
 
             infoLore.add("")
-            infoLore.add("§7--------------------------------------------")
+            infoLore.add("§7§m                                                §7")
 
             // Combine the existing lore with the new lore
             val combinedLore = lore + infoLore

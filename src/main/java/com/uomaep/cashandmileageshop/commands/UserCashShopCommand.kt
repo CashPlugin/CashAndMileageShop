@@ -1,6 +1,6 @@
 package com.uomaep.cashandmileageshop.commands
 
-import com.uomaep.cashandmileageshop.DTO.CashShopDTO
+import com.uomaep.cashandmileageshop.dto.CashShopDTO
 import com.uomaep.cashandmileageshop.guis.CashShopGUI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import org.bukkit.command.Command

@@ -1,18 +1,12 @@
 package com.uomaep.cashandmileageshop
 
-import com.uomaep.cashandmileageshop.commands.CashCommand
-import com.uomaep.cashandmileageshop.commands.SetItemCommand
-import com.uomaep.cashandmileageshop.commands.UUIDCommand
-import com.uomaep.cashandmileageshop.commands.UserCashShopCommand
+import com.uomaep.cashandmileageshop.commands.*
 import com.uomaep.cashandmileageshop.listeners.PurchaseConfirmationEvent
 import com.uomaep.cashandmileageshop.listeners.SetUserAtFirstJoin
 import com.uomaep.cashandmileageshop.listeners.ShopItemClickEvent
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.Message
 import com.uomaep.cashandmileageshop.utils.PropertiesManager
-import com.uomaep.kotlintestplugin.command.CashShopCommand
-import com.uomaep.kotlintestplugin.command.MileageShopCommand
-import com.uomaep.mileageandmileageshop.commands.MileageCommand
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
@@ -40,7 +34,6 @@ class Main : JavaPlugin() {
         getCommand("us")?.setExecutor(UUIDCommand())
         getCommand("캐시샵")?.setExecutor(CashShopCommand())
         getCommand("마일리지샵")?.setExecutor(MileageShopCommand())
-
         getCommand("캐시샵열기")?.setExecutor(UserCashShopCommand())
 
         // 이벤트 등록
@@ -56,7 +49,7 @@ class Main : JavaPlugin() {
     }
 
     private fun createPluginFolder() {
-        if(pluginFolder == null) {
+        if (pluginFolder == null) {
             val folder = dataFolder
             if (!folder.exists()) {
                 folder.mkdir()
@@ -66,7 +59,7 @@ class Main : JavaPlugin() {
     }
 
     private fun connectDB() {
-        if(DatabaseManager.connect()) {
+        if (DatabaseManager.connect()) {
             Message.successfulLogMessage("데이터베이스 연결에 성공했습니다.")
         } else {
             Message.failureLogMessage("데이터베이스 연결에 실패했습니다.")

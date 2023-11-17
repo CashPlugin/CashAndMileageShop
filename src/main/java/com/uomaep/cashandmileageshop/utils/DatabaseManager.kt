@@ -11,7 +11,7 @@ object DatabaseManager {
     private var con: Connection? = null
 
     fun connect(): Boolean {
-        var properties: Properties? = null
+        var properties: Properties?
         try {
             properties = PropertiesManager.getDatabaseProperties()
         } catch (e: NullPointerException) {

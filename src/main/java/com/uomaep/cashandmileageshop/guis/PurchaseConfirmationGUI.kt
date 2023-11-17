@@ -1,10 +1,10 @@
 package com.uomaep.cashandmileageshop.guis
 
-import com.uomaep.cashandmileageshop.DTO.CashItemDTO
-import com.uomaep.cashandmileageshop.DTO.CashShopDTO
+import com.uomaep.cashandmileageshop.dto.CashItemDTO
+import com.uomaep.cashandmileageshop.dto.CashShopDTO
 import com.uomaep.cashandmileageshop.listeners.ShopItemClickEvent
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
-import com.uomaep.kotlintestplugin.utils.ItemUtil
+import com.uomaep.cashandmileageshop.utils.ItemUtil
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender

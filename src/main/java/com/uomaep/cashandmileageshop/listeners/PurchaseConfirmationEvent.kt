@@ -1,13 +1,12 @@
 package com.uomaep.cashandmileageshop.listeners
 
-import com.uomaep.cashandmileageshop.DTO.CashItemDTO
-import com.uomaep.cashandmileageshop.DTO.UserDTO
+import com.uomaep.cashandmileageshop.dto.CashItemDTO
+import com.uomaep.cashandmileageshop.dto.UserDTO
 import com.uomaep.cashandmileageshop.guis.CashShopGUI
 import com.uomaep.cashandmileageshop.guis.PurchaseConfirmationGUI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
-import com.uomaep.kotlintestplugin.utils.ItemUtil
+import com.uomaep.cashandmileageshop.utils.ItemUtil
 import org.bukkit.entity.HumanEntity
-import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
