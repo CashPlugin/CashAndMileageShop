@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 
-class CashCommand: CommandExecutor, TabCompleter {
+class CashCommand : CommandExecutor, TabCompleter {
 
     companion object {
 
@@ -25,32 +25,32 @@ class CashCommand: CommandExecutor, TabCompleter {
         }
 
         private fun getCashByUUID(uuid: String? = null): Int {
-            if(uuid == null) return -1
+            if (uuid == null) return -1
             val resultSet = DatabaseManager.select("select cash from user where uuid = '$uuid';")
-            if(resultSet!!.next()) {
+            if (resultSet!!.next()) {
                 return resultSet.getInt("cash")
             }
             return -1
         }
 
         private fun setCashByUUID(uuid: String? = null, balance: Int): Boolean {
-            if(uuid == null) return false
+            if (uuid == null) return false
             return DatabaseManager.update("update user set cash = $balance where uuid = '$uuid';")
         }
 
         private fun addCashByUUID(uuid: String? = null, balance: Int): Boolean {
-            if(uuid == null) return false
+            if (uuid == null) return false
             val cash = getCashByUUID(uuid)
-            if(cash == -1) return false
+            if (cash == -1) return false
             return setCashByUUID(uuid, cash + balance)
         }
 
         private fun subtractCashByUUID(uuid: String? = null, balance: Int): Boolean {
-            if(uuid == null) return false
+            if (uuid == null) return false
             val cash = getCashByUUID(uuid)
-            if(cash == -1) return false
+            if (cash == -1) return false
 
-            if(cash - balance < 0) return setCashByUUID(uuid, 0)
+            if (cash - balance < 0) return setCashByUUID(uuid, 0)
             return setCashByUUID(uuid, cash - balance)
         }
 
@@ -59,9 +59,9 @@ class CashCommand: CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>?): Boolean {
         val player = sender as Player
 
-        if(args?.size == 0) {
+        if (args?.size == 0) {
             val cash = getCashByUUID(player.uniqueId.toString())
-            if(cash == -1) {
+            if (cash == -1) {
                 UserMessage.sendFailMessage(player, "캐시를 불러오는 도중 오류가 발생했습니다.")
                 return false
             }
@@ -69,32 +69,31 @@ class CashCommand: CommandExecutor, TabCompleter {
             return true
         }
 
-        if(!player.isOp) {
+        if (!player.isOp) {
             UserMessage.sendFailMessage(player, "/캐시 §7- 캐시를 확인합니다.")
             return false
         }
 
-        if(args?.size == 1 || args?.get(0) == "도움말") {
+        if (args?.size == 1 || args?.get(0) == "도움말") {
             help(player)
             return false
         }
 
-        if(args?.size == 2) {
-            when(args[0]) {
+        if (args?.size == 2) {
+            when (args[0]) {
                 "보기" -> {
                     val nickname = args[1]
-                    // val uuid = Bukkit.getOfflinePlayer(nickname).uniqueId.toString()
-//                    val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
                     val uuid = player.uniqueId.toString()
                     val cash = getCashByUUID(uuid)
 
-                    if(cash == -1) {
+                    if (cash == -1) {
                         UserMessage.sendFailMessage(player, "존재하지 않는 플레이어입니다.")
                         return false
                     }
                     UserMessage.sendSuccessMessage(player, "§e${nickname}§f님의 캐시: §a${cash}§f원")
                     return true
                 }
+
                 else -> {
                     help(player)
                     return false
@@ -102,49 +101,50 @@ class CashCommand: CommandExecutor, TabCompleter {
             }
         }
 
-        if(args?.size == 3) {
-            if(!(listOf("설정", "지급", "차감").contains(args[0]))) {
+        if (args?.size == 3) {
+            if (!(listOf("설정", "지급", "차감").contains(args[0]))) {
                 help(player)
                 return false
             }
 
             val nickname = args[1]
-            // val uuid = Bukkit.getOfflinePlayer(nickname).uniqueId.toString()
-//            val uuid = RPGSharpAPI.getRPGPlayerAPI().getUUID(nickname)
             val uuid = player.uniqueId.toString()
             val balance: Int
 
             try {
                 balance = args[2].toInt()
-                if(balance < 0) {
+                if (balance < 0) {
                     UserMessage.sendFailMessage(player, "금액은 0보다 작을 수 없습니다.")
                     return false
                 }
-                when(args[0]) {
+                when (args[0]) {
                     "설정" -> {
-                        if(!setCashByUUID(uuid, balance)) {
+                        if (!setCashByUUID(uuid, balance)) {
                             UserMessage.sendFailMessage(player, "캐시를 설정하는 도중 오류가 발생했습니다.")
                             return false
                         }
                         UserMessage.sendSuccessMessage(player, "§e${nickname}§f님의 캐시를 §a${balance}§f원으로 설정했습니다.")
                         return true
                     }
+
                     "지급" -> {
-                        if(!addCashByUUID(uuid, balance)) {
+                        if (!addCashByUUID(uuid, balance)) {
                             UserMessage.sendFailMessage(player, "캐시를 지급하는 도중 오류가 발생했습니다.")
                             return false
                         }
                         UserMessage.sendSuccessMessage(player, "§e${nickname}§f님에게 §a${balance}§f원을 지급했습니다.")
                         return true
                     }
+
                     "차감" -> {
-                        if(!subtractCashByUUID(uuid, balance)) {
+                        if (!subtractCashByUUID(uuid, balance)) {
                             UserMessage.sendFailMessage(player, "캐시를 차감하는 도중 오류가 발생했습니다.")
                             return false
                         }
                         UserMessage.sendSuccessMessage(player, "§e${nickname}§f님의 캐시에서 §c${balance}§f원을 차감했습니다.")
                         return true
                     }
+
                     else -> {
                         help(player)
                         return false
@@ -162,15 +162,20 @@ class CashCommand: CommandExecutor, TabCompleter {
         return true
     }
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>?): List<String>? {
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>?
+    ): List<String>? {
         val player = sender as Player
-        if(!(player.isOp)) return null
+        if (!(player.isOp)) return null
         else {
-            if(args?.size == 1) {
+            if (args?.size == 1) {
                 return listOf("도움말", "보기", "설정", "지급", "차감")
-            } else if(args?.get(0) != "보기" && args?.size == 2) {
+            } else if (args?.get(0) != "보기" && args?.size == 2) {
                 return null
-            } else if(!(args?.get(0).equals("보기")) && args?.size == 3) {
+            } else if (!(args?.get(0).equals("보기")) && args?.size == 3) {
                 return listOf("<금액>")
             }
         }

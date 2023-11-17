@@ -3,7 +3,7 @@ package com.uomaep.cashandmileageshop.listeners
 import com.uomaep.cashandmileageshop.dto.CashItemDTO
 import com.uomaep.cashandmileageshop.dto.UserDTO
 import com.uomaep.cashandmileageshop.guis.CashShopGUI
-import com.uomaep.cashandmileageshop.guis.PurchaseConfirmationGUI
+import com.uomaep.cashandmileageshop.guis.CashShopPurchaseConfirmationGUI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.ItemUtil
 import org.bukkit.entity.HumanEntity
@@ -14,18 +14,18 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-class PurchaseConfirmationEvent: Listener {
+class CashShopPurchaseConfirmationEvent : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onShopItemClick(e: InventoryClickEvent) {
         val player = e.whoClicked
 
-        if (e.isCancelled){
+        if (e.isCancelled) {
             return
         }
 
         val inventoryHolder = e.inventory.holder ?: return
         //캐시샵을 클릭한 것이 아님 -> 리스너가 작동하지 않아야 함.
-        if (inventoryHolder !is PurchaseConfirmationGUI){
+        if (inventoryHolder !is CashShopPurchaseConfirmationGUI) {
             return
         }
 
@@ -36,9 +36,9 @@ class PurchaseConfirmationEvent: Listener {
         }
 
         //클릭한 홀더가 유저의 것인지 상점인지 확인
-        if(clickedInventoryHolder is PurchaseConfirmationGUI) {//구매 로직
-            when(e.slot){
-                in PurchaseConfirmationGUI.buySlot -> {
+        if (clickedInventoryHolder is CashShopPurchaseConfirmationGUI) {//구매 로직
+            when (e.slot) {
+                in CashShopPurchaseConfirmationGUI.buySlot -> {
                     buyItem(player, clickedInventoryHolder.ogEvent!!, clickedInventoryHolder.ogCashItemDTO!!)
                     e.clickedInventory!!.close()
                     val cashShopGUI = CashShopGUI(clickedInventoryHolder.ogCashShopDTO!!, player)
@@ -46,27 +46,30 @@ class PurchaseConfirmationEvent: Listener {
                     e.isCancelled = true
                     return
                 }
-                in PurchaseConfirmationGUI.blockingSlot -> {
+
+                in CashShopPurchaseConfirmationGUI.blockingSlot -> {
                     e.isCancelled = true
                     return
                 }
-                in PurchaseConfirmationGUI.cancelSlot -> {
+
+                in CashShopPurchaseConfirmationGUI.cancelSlot -> {
                     e.clickedInventory!!.close()
                     val cashShopGUI = CashShopGUI(clickedInventoryHolder.ogCashShopDTO!!, player)
                     player.openInventory(cashShopGUI.inventory)
                     e.isCancelled = true
                     return
                 }
+
                 else -> {
                     e.isCancelled = true
                     return
                 }
             }
-        }
-        else{//꼼수 막기
+        } else {//꼼수 막기
             e.isCancelled = true
         }
     }
+
     private fun buyItem(
         player: HumanEntity,
         e: InventoryClickEvent,
@@ -153,7 +156,8 @@ class PurchaseConfirmationEvent: Listener {
         cashItemDTO: CashItemDTO,
         uuid: String
     ): ItemStack {
-        val sql5 = "select * from cash_item join item on cash_item.item_id = item.id where cash_item.id = ${cashItemDTO.cashItemId};"
+        val sql5 =
+            "select * from cash_item join item on cash_item.item_id = item.id where cash_item.id = ${cashItemDTO.cashItemId};"
         val result5 = DatabaseManager.select(sql5)!!
 
         result5.next()
@@ -231,16 +235,16 @@ class PurchaseConfirmationEvent: Listener {
         result.next()
         return result.getInt("cnt")
     }
-}
 
-fun itemLogging(userId: Int, itemId: Int, shopId: Int, e: InventoryClickEvent): Long {
-    val statement = "insert into cash_log (user_id, cash_item_id, purchase_at, cash_shop_id) " +
-            "values (${userId}, ${itemId}, NOW(), ${shopId});"
-    val insertedId = DatabaseManager.insertAndGetGeneratedKey(statement)
-    if (insertedId == -1L){
-        println("[캐시상점]: 로깅 실패")
-        e.isCancelled = true
-        return -1
+    fun itemLogging(userId: Int, itemId: Int, shopId: Int, e: InventoryClickEvent): Long {
+        val statement = "insert into cash_log (user_id, cash_item_id, purchase_at, cash_shop_id) " +
+                "values (${userId}, ${itemId}, NOW(), ${shopId});"
+        val insertedId = DatabaseManager.insertAndGetGeneratedKey(statement)
+        if (insertedId == -1L) {
+            println("[캐시상점]: 로깅 실패")
+            e.isCancelled = true
+            return -1
+        }
+        return insertedId!!
     }
-    return insertedId!!
 }

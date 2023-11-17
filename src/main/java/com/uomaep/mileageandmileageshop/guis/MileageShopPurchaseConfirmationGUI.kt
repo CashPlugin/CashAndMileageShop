@@ -1,10 +1,10 @@
-package com.uomaep.cashandmileageshop.guis
+package com.uomaep.mileageandmileageshop.guis
 
-import com.uomaep.cashandmileageshop.dto.CashItemDTO
-import com.uomaep.cashandmileageshop.dto.CashShopDTO
-import com.uomaep.cashandmileageshop.listeners.ShopItemClickEvent
+import com.uomaep.Mileageandmileageshop.dto.MileageItemDTO
+import com.uomaep.cashandmileageshop.dto.MileageShopDTO
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.ItemUtil
+import com.uomaep.mileageandmileageshop.listeners.MileageShopItemClickEvent
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
@@ -14,66 +14,72 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 import org.bukkit.inventory.ItemStack
 
-class PurchaseConfirmationGUI: InventoryHolder {
+class MileageShopPurchaseConfirmationGUI : InventoryHolder {
     private val inventory: Inventory
     var ogEvent: InventoryClickEvent? = null
-    var ogCashItemDTO: CashItemDTO? = null
-    var OgshopItemClickEvent: ShopItemClickEvent? = null
-    var ogCashShopDTO: CashShopDTO? = null
+    var ogmileageItemDTO: MileageItemDTO? = null
+    var ogshopItemClickEventmileage: MileageShopItemClickEvent? = null
+    var ogmileageShopDTO: MileageShopDTO? = null
 
-    companion object{
+    companion object {
         val name: String = "구매 확인"
         val cancelSlot = hashSetOf(0, 1, 2, 9, 10, 11, 18, 19, 20)
         val blockingSlot = hashSetOf(3, 4, 5, 12, 13, 14, 21, 22, 23)
         val buySlot = hashSetOf(6, 7, 8, 15, 16, 17, 24, 25, 26)
     }
 
-    constructor(sender: CommandSender,
-                e: InventoryClickEvent,
-                cashItemDTO: CashItemDTO,
-                cashShopDTO: CashShopDTO,
-                shopItemClickEvent: ShopItemClickEvent
+    constructor(
+        sender: CommandSender,
+        e: InventoryClickEvent,
+        mileageItemDTO: MileageItemDTO,
+        mileageShopDTO: MileageShopDTO,
+        mileageShopItemClickEvent: MileageShopItemClickEvent
     ) {
         this.inventory = Bukkit.createInventory(this, 27, name)
         ogEvent = e
-        ogCashItemDTO = cashItemDTO
-        OgshopItemClickEvent = shopItemClickEvent
-        ogCashShopDTO = cashShopDTO
+        ogmileageItemDTO = mileageItemDTO
+        ogshopItemClickEventmileage = mileageShopItemClickEvent
+        ogmileageShopDTO = mileageShopDTO
 
         // item set logic
-        val item: ItemStack = ItemUtil.deserialize(cashItemDTO.itemInfo)
+        val item: ItemStack = ItemUtil.deserialize(mileageItemDTO.itemInfo)
 
         val lore = item.itemMeta.lore ?: mutableListOf()
         val infoLore = mutableListOf(
             "",
             "§7--------------------------------------------",
             "",
-            CashShopGUI.PRICE.replace("%price%", cashItemDTO.price.toString())
+            MileageShopGUI.PRICE.replace("%price%", mileageItemDTO.price.toString())
         )
 
-        if (cashItemDTO.maxBuyableCnt != -1){
+        if (mileageItemDTO.maxBuyableCnt != -1) {
             //로그 뒤져서 남은 구매가능 횟수
             val uuid = (sender as Player).uniqueId
-            val sql = "select count(*) cnt from cash_log where user_id = (select id from user where uuid = '${uuid}') " +
-                    "and cash_shop_id = ${cashItemDTO.cashShopId} and cash_item_id = ${cashItemDTO.cashItemId};"
+            val sql =
+                "select count(*) cnt from mileage_log where user_id = (select id from user where uuid = '${uuid}') " +
+                        "and mileage_shop_id = ${mileageItemDTO.mileageShopId} and mileage_item_id = ${mileageItemDTO.mileageItemId};"
             val result = DatabaseManager.select(sql)!!
 
             result.next()
             val curBuyCnt = result.getInt("cnt")
-            infoLore.add(CashShopGUI.SERVER_LIMITED
-                .replace("%server_remain%", (cashItemDTO.maxBuyableCnt - curBuyCnt).toString())
-                .replace("%server_purchases_limited%", cashItemDTO.maxBuyableCnt.toString()))
+            infoLore.add(
+                MileageShopGUI.SERVER_LIMITED
+                    .replace("%server_remain%", (mileageItemDTO.maxBuyableCnt - curBuyCnt).toString())
+                    .replace("%server_purchases_limited%", mileageItemDTO.maxBuyableCnt.toString())
+            )
         }
-        if (cashItemDTO.maxBuyableCntServer != -1){
-            val sql = "select count(*) cnt from cash_log where " +
-                    "cash_shop_id = ${cashItemDTO.cashShopId} and cash_item_id = ${cashItemDTO.cashItemId};"
+        if (mileageItemDTO.maxBuyableCntServer != -1) {
+            val sql = "select count(*) cnt from mileage_log where " +
+                    "mileage_shop_id = ${mileageItemDTO.mileageShopId} and mileage_item_id = ${mileageItemDTO.mileageItemId};"
             val result = DatabaseManager.select(sql)!!
 
             result.next()
             val curServerBuyCnt = result.getInt("cnt")
-            infoLore.add(CashShopGUI.USER_LIMITED
-                .replace("%user_remain%", (cashItemDTO.maxBuyableCntServer - curServerBuyCnt).toString())
-                .replace("%user_purchases_limited%", cashItemDTO.maxBuyableCntServer.toString()))
+            infoLore.add(
+                MileageShopGUI.USER_LIMITED
+                    .replace("%user_remain%", (mileageItemDTO.maxBuyableCntServer - curServerBuyCnt).toString())
+                    .replace("%user_purchases_limited%", mileageItemDTO.maxBuyableCntServer.toString())
+            )
         }
 
         infoLore.add("")
@@ -103,13 +109,13 @@ class PurchaseConfirmationGUI: InventoryHolder {
         wName.setDisplayName("*")
         white.itemMeta = wName
 
-        for (i in cancelSlot){
+        for (i in cancelSlot) {
             this.inventory.setItem(i, red)
         }
-        for (i in buySlot){
+        for (i in buySlot) {
             this.inventory.setItem(i, green)
         }
-        for (i in blockingSlot){
+        for (i in blockingSlot) {
             this.inventory.setItem(i, white)
         }
 

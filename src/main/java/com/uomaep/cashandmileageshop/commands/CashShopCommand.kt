@@ -6,14 +6,19 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.command.TabCompleter
 
-class CashShopCommand(): CommandExecutor, TabCompleter {
+class CashShopCommand() : CommandExecutor, TabCompleter {
 
-    override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<out String>?): List<String> {
+    override fun onTabComplete(
+        sender: CommandSender,
+        command: Command,
+        label: String,
+        args: Array<out String>?
+    ): List<String> {
         if (args!!.size == 1) {
             return listOf("생성", "삭제", "진열", "아이템삭제", "목록", "오픈", "닫기")
         }
         return when (args[0]) {
-            "생성"-> {
+            "생성" -> {
                 listOf("<이름> <줄 수>")
             }
 
@@ -24,8 +29,8 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
             "진열" -> {
                 val cashShopNames = getCashShopNames(listOf(1, 2))
 
-                when(val cashShopName = args[1]){
-                    in cashShopNames-> {
+                when (val cashShopName = args[1]) {
+                    in cashShopNames -> {
                         if (args.size == 2) {
                             return cashShopNames
                         }
@@ -39,21 +44,23 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                             itemNames += resultSet.getString("name")
                         }
 
-                        return when(val itemName = args[2]){
+                        return when (val itemName = args[2]) {
                             in itemNames -> {
                                 listOf("<슬롯번호> <가격> <최대구매가능갯수(개인)> <최대구매가능갯수(전역)>")
                             }
+
                             else -> itemNames
                         }
                     }
+
                     else -> cashShopNames
                 }
             }
 
-            "아이템삭제"-> {
+            "아이템삭제" -> {
                 val cashShopNames = getCashShopNames(listOf(1, 2))
 
-                when(val cashShopName = args[1]){
+                when (val cashShopName = args[1]) {
                     in cashShopNames -> {
                         val slotNums = mutableListOf<String>()
 
@@ -65,12 +72,13 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
 
                         val resultSet1 = DatabaseManager.select(sql2)!!
 
-                        while(resultSet1.next()){
+                        while (resultSet1.next()) {
                             slotNums += resultSet1.getInt("slot_num").toString()
                         }
 
                         slotNums
                     }
+
                     else -> cashShopNames
                 }
             }
@@ -121,7 +129,8 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
             message.append("/캐시샵 생성 <이름> <줄 수> : 캐시샵을 생성하는 명령어").append("\n")
             message.append("/캐시샵 삭제 <이름> : 해당 캐시샵 삭제").append("\n")
             message.append("/캐시샵 진열 <샵이름> <아이템이름> <슬롯번호> <가격> <최대구매가능갯수(개인)> <최대구매가능갯수(전역)>").append("\n")
-            message.append("    : 캐시샵에 물품 등록. 구매 가능 갯수가 -1일 경우 제한이 없음. (개인)은 인당 최대 구매가능 갯수고 전역은 전체 유저 한정 물품 갯수.").append("\n")
+            message.append("    : 캐시샵에 물품 등록. 구매 가능 갯수가 -1일 경우 제한이 없음. (개인)은 인당 최대 구매가능 갯수고 전역은 전체 유저 한정 물품 갯수.")
+                .append("\n")
             message.append("/캐시샵 아이템삭제 <이름> <슬롯번호> : 해당 캐시샵의 <슬롯번호> 칸의 물품을 삭제").append("\n")
             message.append("/캐시샵 목록 <샵이름>: 캐시샵 목록과 각 캐시샵에 등록된 아이템 목록을 출력").append("\n")
             message.append("    : 삭제된 캐시샵도 목록에 포함됨").append("\n")
@@ -132,7 +141,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
             return false
         }
 
-        when(args[0]){
+        when (args[0]) {
             "생성" -> {
                 if (args.size != 3) {
                     sender.sendMessage("명령어 사용법: /캐시샵 생성 <이름> <줄 수>")
@@ -145,7 +154,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 val sql1 = "select id from cash_shop where name = '$name';"
                 val result1 = DatabaseManager.select(sql1)!!
 
-                if (result1.next()){
+                if (result1.next()) {
                     sender.sendMessage("#Error 캐시샵 생성 실패: $name 이미 존재하는 상점")
                     return false
                 }
@@ -153,7 +162,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 val sql2 = "insert into cash_shop(name, line_num) values('$name', $lineNum);"
                 val result = DatabaseManager.insert(sql2)
 
-                if (!result){
+                if (!result) {
                     sender.sendMessage("#Error 캐시샵 생성 실패: $name DB에러")
                     return false
                 }
@@ -172,7 +181,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 val sql1 = "select id from cash_shop where name = '$cashShopName' and state in (1, 2);"
                 val result = DatabaseManager.select(sql1)!!
 
-                if (!result.next()){
+                if (!result.next()) {
                     sender.sendMessage("#Error 캐시샵 삭제 실패: $cashShopName 존재하지 않는 상정명")
                     return false
                 }
@@ -183,7 +192,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                         "where id = $cashShopId;"
                 val result2 = DatabaseManager.update(sql2)
 
-                if (!result2){
+                if (!result2) {
                     sender.sendMessage("#Error 캐시샵 삭제 실패: $cashShopName DB에러")
                     return false
                 }
@@ -192,9 +201,11 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
             }
 
             "진열" -> {
-                if(args.size != 7){
-                    sender.sendMessage("명령어 사용법: /캐시샵 진열 <샵이름> <아이템이름> <슬롯번호> <가격> <최대구매가능갯수(개인)> <최대구매가능갯수(전역)>" +
-                            "    : 캐시샵에 물품 등록. 구매 가능 갯수가 -1일 경우 제한이 없음. (개인)은 인당 최대 구매가능 갯수고 전역은 전체 유저 한정 물품 갯수.")
+                if (args.size != 7) {
+                    sender.sendMessage(
+                        "명령어 사용법: /캐시샵 진열 <샵이름> <아이템이름> <슬롯번호> <가격> <최대구매가능갯수(개인)> <최대구매가능갯수(전역)>" +
+                                "    : 캐시샵에 물품 등록. 구매 가능 갯수가 -1일 경우 제한이 없음. (개인)은 인당 최대 구매가능 갯수고 전역은 전체 유저 한정 물품 갯수."
+                    )
                     return false
                 }
 
@@ -203,14 +214,14 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
 
                 val sql1 = "select id from cash_shop where name = '$cashShopName' and state in (1, 2);"
                 val result1 = DatabaseManager.select(sql1)!!
-                if (!result1.next()){
+                if (!result1.next()) {
                     sender.sendMessage("#Error 캐시샵 진열 실패: $cashShopName 존재하지 않는 상점명")
                     return false
                 }
 
                 val sql2 = "select id from item where name = '$itemName';"
                 val result2 = DatabaseManager.select(sql2)!!
-                if (!result2.next()){
+                if (!result2.next()) {
                     sender.sendMessage("#Error 캐시샵 진열 실패: $itemName 존재하지 않는 아이템명")
                     return false
                 }
@@ -222,11 +233,12 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 val maxBuyableCnt = args[5].toInt()
                 val maxBuyableCntServer = args[6].toInt()
 
-                val sql3 = "insert into cash_item(max_buyable_cnt, price, item_id, cash_shop_id, max_buyable_cnt_server, slot_num)\n" +
-                        "VALUES ($maxBuyableCnt, $price, $itemId, $cashShopId, $maxBuyableCntServer, $slotNum);"
+                val sql3 =
+                    "insert into cash_item(max_buyable_cnt, price, item_id, cash_shop_id, max_buyable_cnt_server, slot_num)\n" +
+                            "VALUES ($maxBuyableCnt, $price, $itemId, $cashShopId, $maxBuyableCntServer, $slotNum);"
                 val result3 = DatabaseManager.insert(sql3)
 
-                if(!result3){
+                if (!result3) {
                     sender.sendMessage("#Error 캐시샵 진열 실패: DB에러")
                     return false
                 }
@@ -244,7 +256,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
 
                 val sql1 = "select id from cash_shop where name = '$cashShopName' and state in (1, 2);"
                 val result1 = DatabaseManager.select(sql1)!!
-                if (!result1.next()){
+                if (!result1.next()) {
                     sender.sendMessage("#Error 캐시샵 아이템삭제 실패: $cashShopName 존재하지 않는 상점명")
                     return false
                 }
@@ -255,11 +267,11 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 val result2 = DatabaseManager.select(sql2)!!
 
                 val slotNums = mutableListOf<Int>()
-                while (result2.next()){
+                while (result2.next()) {
                     slotNums.add(result2.getInt("slot_num"))
                 }
 
-                if (itemSlotNum !in slotNums){
+                if (itemSlotNum !in slotNums) {
                     sender.sendMessage("#Error 캐시샵 아이템삭제 실패: $cashShopName -> $itemSlotNum 존재하지 않는 아이템")
                     return false
                 }
@@ -270,7 +282,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                         "    and cash_shop_id = $cashShopId;"
                 val result = DatabaseManager.update(sql)
 
-                if (!result){
+                if (!result) {
                     sender.sendMessage("#Error 캐시샵 아이템삭제 실패: $cashShopName DB에러")
                     return false
                 }
@@ -287,13 +299,14 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 val cashShopName = args[1].replace("(닫힘)", "").replace("(오픈)", "").replace("(삭제됨)", "")
                 val sql1 = "select id from cash_shop where name = '$cashShopName';"
                 val result1 = DatabaseManager.select(sql1)!!
-                if (!result1.next()){
+                if (!result1.next()) {
                     sender.sendMessage("#Error 캐시샵 목록 실패: $cashShopName 존재하지 않는 상점명")
                     return false
                 }
                 val cashShopId = result1.getInt("id")
 
-                val sql2 = "select name, price from item join (select item_id, price from cash_item where cash_shop_id = $cashShopId) as cashItems on id = item_id;"
+                val sql2 =
+                    "select name, price from item join (select item_id, price from cash_item where cash_shop_id = $cashShopId) as cashItems on id = item_id;"
                 val result2 = DatabaseManager.select(sql2)!!
                 val sb = StringBuilder()
 
@@ -302,7 +315,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
 
                 sb.append("=============================================================").append("\n")
                 sb.append("$cashShopName 캐시샵에 등록된 아이템 목록").append("\n")
-                var cnt=1
+                var cnt = 1
                 while (result2.next()) {
                     val rowValues = StringBuilder()
                     for (i in 1..columnCount) {
@@ -314,7 +327,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                     sb.append("[${cnt++}]: ").append(rowValues).append("\n")
                 }
 
-                if (cnt==1){
+                if (cnt == 1) {
                     sender.sendMessage("$cashShopName 캐시샵에 등록된 아이템이 없습니다.")
                     return false
                 }
@@ -324,7 +337,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
             }
 
             "오픈" -> {
-                if (args.size != 2){
+                if (args.size != 2) {
                     sender.sendMessage("명령어 사용법: /캐시샵 오픈 <샵이름>: 캐시샵을 오픈")
                     return false
                 }
@@ -333,7 +346,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 val sql1 = "select id from cash_shop where name = '$cashShopName' and state = 1;"
                 val result1 = DatabaseManager.select(sql1)!!
 
-                if (!result1.next()){
+                if (!result1.next()) {
                     sender.sendMessage("#Error 캐시샵 오픈 실패: $cashShopName 존재하지 않는 상점명")
                     return false
                 }
@@ -342,7 +355,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 val sql2 = "update cash_shop set state = 2 where id = $cashShopId and state = 1;"
                 val result2 = DatabaseManager.update(sql2)
 
-                if (!result2){
+                if (!result2) {
                     sender.sendMessage("#Error 캐시샵 오픈 실패: $cashShopName DB에러")
                     return false
                 }
@@ -351,7 +364,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
             }
 
             "닫기" -> {
-                if (args.size != 2){
+                if (args.size != 2) {
                     sender.sendMessage("명령어 사용법: /캐시샵 닫기 <샵이름>: 캐시샵을 임시로 닫음")
                     return false
                 }
@@ -360,7 +373,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 val sql1 = "select id from cash_shop where name = '$cashShopName' and state = 2;"
                 val result1 = DatabaseManager.select(sql1)!!
 
-                if (!result1.next()){
+                if (!result1.next()) {
                     sender.sendMessage("#Error 캐시샵 오픈 실패: $cashShopName 존재하지 않는 상점명")
                     return false
                 }
@@ -369,7 +382,7 @@ class CashShopCommand(): CommandExecutor, TabCompleter {
                 val sql2 = "update cash_shop set state = 1 where id = $cashShopId and state = 2;"
                 val result2 = DatabaseManager.update(sql2)
 
-                if (!result2){
+                if (!result2) {
                     sender.sendMessage("#Error 캐시샵 닫기 실패: $cashShopName DB에러")
                     return false
                 }

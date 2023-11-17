@@ -3,14 +3,14 @@ package com.uomaep.cashandmileageshop.listeners
 import com.uomaep.cashandmileageshop.dto.CashItemDTO
 import com.uomaep.cashandmileageshop.dto.CashShopDTO
 import com.uomaep.cashandmileageshop.guis.CashShopGUI
-import com.uomaep.cashandmileageshop.guis.PurchaseConfirmationGUI
+import com.uomaep.cashandmileageshop.guis.CashShopPurchaseConfirmationGUI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 
-class ShopItemClickEvent : Listener {
+class CashShopItemClickEvent : Listener {
     @EventHandler(priority = EventPriority.HIGHEST)
     fun onShopItemClick(e: InventoryClickEvent) {
         val player = e.whoClicked
@@ -88,8 +88,9 @@ class ShopItemClickEvent : Listener {
                 name = result2.getString("name")
             )
 
-            val purchaseConfirmationGUI = PurchaseConfirmationGUI(player, e, cashItemDTO, cashShopDTO, this)
-            player.openInventory(purchaseConfirmationGUI.inventory)
+            val cashShopPurchaseConfirmationGUI =
+                CashShopPurchaseConfirmationGUI(player, e, cashItemDTO, cashShopDTO, this)
+            player.openInventory(cashShopPurchaseConfirmationGUI.inventory)
             e.isCancelled = true
         } else {//꼼수 막기
             e.isCancelled = true

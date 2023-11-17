@@ -1,12 +1,16 @@
 package com.uomaep.cashandmileageshop
 
 import com.uomaep.cashandmileageshop.commands.*
-import com.uomaep.cashandmileageshop.listeners.PurchaseConfirmationEvent
+import com.uomaep.cashandmileageshop.listeners.CashShopItemClickEvent
+import com.uomaep.cashandmileageshop.listeners.CashShopPurchaseConfirmationEvent
 import com.uomaep.cashandmileageshop.listeners.SetUserAtFirstJoin
-import com.uomaep.cashandmileageshop.listeners.ShopItemClickEvent
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.Message
 import com.uomaep.cashandmileageshop.utils.PropertiesManager
+import com.uomaep.mileageandmileageshop.commands.MileageShopCommand
+import com.uomaep.mileageandmileageshop.commands.UserMileageShopCommand
+import com.uomaep.mileageandmileageshop.listeners.MileageShopItemClickEvent
+import com.uomaep.mileageandmileageshop.listeners.MileageShopPurchaseConfirmationEvent
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
@@ -28,23 +32,28 @@ class Main : JavaPlugin() {
         connectDB()
 
         // 명령어 등록
-        getCommand("캐시")?.setExecutor(CashCommand())
-        getCommand("마일리지")?.setExecutor(MileageCommand())
         getCommand("아이템등록")?.setExecutor(SetItemCommand())
-        getCommand("us")?.setExecutor(UUIDCommand())
+
+        getCommand("캐시")?.setExecutor(CashCommand())
         getCommand("캐시샵")?.setExecutor(CashShopCommand())
-        getCommand("마일리지샵")?.setExecutor(MileageShopCommand())
         getCommand("캐시샵열기")?.setExecutor(UserCashShopCommand())
+
+        getCommand("마일리지")?.setExecutor(MileageCommand())
+        getCommand("마일리지샵")?.setExecutor(MileageShopCommand())
+        getCommand("마일리지샵열기")?.setExecutor(UserMileageShopCommand())
 
         // 이벤트 등록
         server.pluginManager.registerEvents(SetUserAtFirstJoin(), this)
-        server.pluginManager.registerEvents(ShopItemClickEvent(), this)
-        server.pluginManager.registerEvents(PurchaseConfirmationEvent(), this)
+
+        server.pluginManager.registerEvents(CashShopItemClickEvent(), this)
+        server.pluginManager.registerEvents(CashShopPurchaseConfirmationEvent(), this)
+
+
+        server.pluginManager.registerEvents(MileageShopItemClickEvent(), this)
+        server.pluginManager.registerEvents(MileageShopPurchaseConfirmationEvent(), this)
     }
 
     override fun onDisable() {
-        // Plugin shutdown logic
-
         DatabaseManager.disconnect()
     }
 
