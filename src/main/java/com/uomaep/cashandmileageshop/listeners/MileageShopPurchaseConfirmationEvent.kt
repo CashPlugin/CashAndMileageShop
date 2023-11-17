@@ -1,11 +1,11 @@
-package com.uomaep.mileageandmileageshop.listeners
+package com.uomaep.cashandmileageshop.listeners
 
-import com.uomaep.Mileageandmileageshop.dto.MileageItemDTO
+import com.uomaep.cashandmileageshop.dto.MileageItemDTO
 import com.uomaep.cashandmileageshop.dto.UserDTO
+import com.uomaep.cashandmileageshop.guis.MileageShopPurchaseConfirmationGUI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.ItemUtil
 import com.uomaep.mileageandmileageshop.guis.MileageShopGUI
-import com.uomaep.mileageandmileageshop.guis.MileageShopPurchaseConfirmationGUI
 import org.bukkit.entity.HumanEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority

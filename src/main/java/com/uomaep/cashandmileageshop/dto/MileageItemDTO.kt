@@ -1,4 +1,4 @@
-package com.uomaep.Mileageandmileageshop.dto
+package com.uomaep.cashandmileageshop.dto
 
 data class MileageItemDTO(
     val mileageItemId: Int,

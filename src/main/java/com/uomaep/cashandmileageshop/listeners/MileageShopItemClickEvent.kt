@@ -1,10 +1,10 @@
-package com.uomaep.mileageandmileageshop.listeners
+package com.uomaep.cashandmileageshop.listeners
 
-import com.uomaep.Mileageandmileageshop.dto.MileageItemDTO
+import com.uomaep.cashandmileageshop.dto.MileageItemDTO
 import com.uomaep.cashandmileageshop.dto.MileageShopDTO
+import com.uomaep.cashandmileageshop.guis.MileageShopPurchaseConfirmationGUI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.mileageandmileageshop.guis.MileageShopGUI
-import com.uomaep.mileageandmileageshop.guis.MileageShopPurchaseConfirmationGUI
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
@@ -35,7 +35,6 @@ class MileageShopItemClickEvent : Listener {
         if (clickedInventoryHolder is MileageShopGUI) {//구매 로직
             val currentItem = e.currentItem
             if (currentItem == null) {
-                println("[마일리지상점]: 빈 슬롯을 클릭")
                 e.isCancelled = true
                 return
             }

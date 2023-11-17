@@ -4,10 +4,10 @@ main: com.uomaep.cashandmileageshop.Main
 api-version: '1.18'
 
 commands:
-  캐시:
-  마일리지:
   아이템등록:
-  us:
+  캐시:
   캐시샵:
-  마일리지샵:
   캐시샵열기:
+  마일리지:
+  마일리지샵:
+  마일리지샵열기:

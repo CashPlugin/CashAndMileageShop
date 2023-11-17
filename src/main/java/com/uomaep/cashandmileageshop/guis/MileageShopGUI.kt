@@ -1,6 +1,6 @@
 package com.uomaep.mileageandmileageshop.guis
 
-import com.uomaep.Mileageandmileageshop.dto.MileageItemDTO
+import com.uomaep.cashandmileageshop.dto.MileageItemDTO
 import com.uomaep.cashandmileageshop.dto.MileageShopDTO
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.ItemUtil

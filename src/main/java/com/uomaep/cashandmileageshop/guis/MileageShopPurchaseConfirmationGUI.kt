@@ -1,10 +1,11 @@
-package com.uomaep.mileageandmileageshop.guis
+package com.uomaep.cashandmileageshop.guis
 
-import com.uomaep.Mileageandmileageshop.dto.MileageItemDTO
+import com.uomaep.cashandmileageshop.dto.MileageItemDTO
 import com.uomaep.cashandmileageshop.dto.MileageShopDTO
+import com.uomaep.cashandmileageshop.listeners.MileageShopItemClickEvent
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.ItemUtil
-import com.uomaep.mileageandmileageshop.listeners.MileageShopItemClickEvent
+import com.uomaep.mileageandmileageshop.guis.MileageShopGUI
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender

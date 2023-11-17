@@ -35,7 +35,6 @@ class CashShopItemClickEvent : Listener {
         if (clickedInventoryHolder is CashShopGUI) {//구매 로직
             val currentItem = e.currentItem
             if (currentItem == null) {
-                println("[캐시상점]: 빈 슬롯을 클릭")
                 e.isCancelled = true
                 return
             }
