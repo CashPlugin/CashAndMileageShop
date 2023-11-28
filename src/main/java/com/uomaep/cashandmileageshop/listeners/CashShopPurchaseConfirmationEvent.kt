@@ -6,6 +6,7 @@ import com.uomaep.cashandmileageshop.guis.CashShopGUI
 import com.uomaep.cashandmileageshop.guis.CashShopPurchaseConfirmationGUI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.ItemUtil
+import com.uomaep.cashandmileageshop.utils.UserUtil
 import org.bukkit.entity.HumanEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
@@ -140,6 +141,19 @@ class CashShopPurchaseConfirmationEvent : Listener {
 
             //아이템 지급
             player.inventory.addItem(ItemUtil.deserialize(cashItemDTO.itemInfo))
+            UserUtil.playBuyCompleteSound(player)
+            player.sendMessage("[캐시상점]: §f◇ 아이템 구매에 성공하였습니다.")
+
+            //플레이어에게 캐시 아이템 가격의 10%만큼 마일리지 지급 db에 기록
+            val bonusMileage = (cashItemDTO.price * 0.1).toInt()
+            val sql5 = "update user set mileage = mileage + $bonusMileage where uuid = '${user.uuid}';"
+            val result5 = DatabaseManager.update(sql5)
+            if (!result5) {
+                println("[캐시상점]: §f◇ 보너스 마일리지 지급에 실패했습니다.")
+                e.isCancelled = true
+                return false
+            }
+            player.sendMessage("[캐시상점]: §f◇ 보너스 마일리지 $bonusMileage 지급 완료")
 
             //캐시 아이템 정보 다시 가져오기
             val item: ItemStack = getItemInfoById(cashItemDTO, user.uuid)
@@ -147,7 +161,7 @@ class CashShopPurchaseConfirmationEvent : Listener {
             //캐시샵의 구매한 아이템 정보 새로고침
             e.inventory.setItem(cashItemDTO.slotNum, item)
         } else {
-            player.sendMessage("[캐시상점]: 캐시가 부족합니다.")
+            player.sendMessage("[캐시상점]: §f◇ §c잔액이 부족합니다.")
         }
         return true
     }
@@ -236,7 +250,7 @@ class CashShopPurchaseConfirmationEvent : Listener {
         return result.getInt("cnt")
     }
 
-    fun itemLogging(userId: Int, itemId: Int, shopId: Int, e: InventoryClickEvent): Long {
+    private fun itemLogging(userId: Int, itemId: Int, shopId: Int, e: InventoryClickEvent): Long {
         val statement = "insert into cash_log (user_id, cash_item_id, purchase_at, cash_shop_id) " +
                 "values (${userId}, ${itemId}, NOW(), ${shopId});"
         val insertedId = DatabaseManager.insertAndGetGeneratedKey(statement)
