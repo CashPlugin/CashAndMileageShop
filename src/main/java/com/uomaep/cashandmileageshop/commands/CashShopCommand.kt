@@ -296,7 +296,9 @@ class CashShopCommand() : CommandExecutor, TabCompleter {
                     return false
                 }
 
-                val cashShopName = args[1].replace("(닫힘)", "").replace("(오픈)", "").replace("(삭제됨)", "")
+                val cashShopName = args[1].replace("(닫힘)", "")
+                    .replace("(오픈)", "")
+                    .replace("(삭제됨)", "")
                 val sql1 = "select id from cash_shop where name = '$cashShopName';"
                 val result1 = DatabaseManager.select(sql1)!!
                 if (!result1.next()) {
