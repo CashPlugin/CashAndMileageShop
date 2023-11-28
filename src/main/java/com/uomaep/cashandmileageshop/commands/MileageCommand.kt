@@ -2,6 +2,7 @@ package com.uomaep.cashandmileageshop.commands
 
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.UserMessage
+import com.uomaep.cashandmileageshop.utils.UserUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -83,8 +84,8 @@ class MileageCommand : CommandExecutor, TabCompleter {
             when (args[0]) {
                 "보기" -> {
                     val nickname = args[1]
-                    val uuid = player.uniqueId.toString()
-                    val mileage = getMileageByUUID(uuid)
+                    val uuid = UserUtil.getPlayerUUID(nickname)
+                    val mileage = getMileageByUUID(uuid.toString())
 
                     if (mileage == -1) {
                         UserMessage.sendFailMessage(player, "존재하지 않는 플레이어입니다.")
@@ -108,7 +109,7 @@ class MileageCommand : CommandExecutor, TabCompleter {
             }
 
             val nickname = args[1]
-            val uuid = player.uniqueId.toString()
+            val uuid = UserUtil.getPlayerUUID(nickname)
             val balance: Int
 
             try {
@@ -119,7 +120,7 @@ class MileageCommand : CommandExecutor, TabCompleter {
                 }
                 when (args[0]) {
                     "설정" -> {
-                        if (!setMileageByUUID(uuid, balance)) {
+                        if (!setMileageByUUID(uuid.toString(), balance)) {
                             UserMessage.sendFailMessage(player, "마일리지를 설정하는 도중 오류가 발생했습니다.")
                             return false
                         }
@@ -128,7 +129,7 @@ class MileageCommand : CommandExecutor, TabCompleter {
                     }
 
                     "지급" -> {
-                        if (!addMileageByUUID(uuid, balance)) {
+                        if (!addMileageByUUID(uuid.toString(), balance)) {
                             UserMessage.sendFailMessage(player, "마일리지를 지급하는 도중 오류가 발생했습니다.")
                             return false
                         }
@@ -137,7 +138,7 @@ class MileageCommand : CommandExecutor, TabCompleter {
                     }
 
                     "차감" -> {
-                        if (!subtractMileageByUUID(uuid, balance)) {
+                        if (!subtractMileageByUUID(uuid.toString(), balance)) {
                             UserMessage.sendFailMessage(player, "마일리지를 차감하는 도중 오류가 발생했습니다.")
                             return false
                         }

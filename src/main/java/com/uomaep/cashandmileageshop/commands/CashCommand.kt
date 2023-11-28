@@ -2,6 +2,7 @@ package com.uomaep.cashandmileageshop.commands
 
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.UserMessage
+import com.uomaep.cashandmileageshop.utils.UserUtil
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -83,8 +84,8 @@ class CashCommand : CommandExecutor, TabCompleter {
             when (args[0]) {
                 "보기" -> {
                     val nickname = args[1]
-                    val uuid = player.uniqueId.toString()
-                    val cash = getCashByUUID(uuid)
+                    val uuid = UserUtil.getPlayerUUID(nickname)
+                    val cash = getCashByUUID(uuid.toString())
 
                     if (cash == -1) {
                         UserMessage.sendFailMessage(player, "존재하지 않는 플레이어입니다.")
@@ -108,7 +109,7 @@ class CashCommand : CommandExecutor, TabCompleter {
             }
 
             val nickname = args[1]
-            val uuid = player.uniqueId.toString()
+            val uuid = UserUtil.getPlayerUUID(nickname)
             val balance: Int
 
             try {
@@ -119,7 +120,7 @@ class CashCommand : CommandExecutor, TabCompleter {
                 }
                 when (args[0]) {
                     "설정" -> {
-                        if (!setCashByUUID(uuid, balance)) {
+                        if (!setCashByUUID(uuid.toString(), balance)) {
                             UserMessage.sendFailMessage(player, "캐시를 설정하는 도중 오류가 발생했습니다.")
                             return false
                         }
@@ -128,7 +129,7 @@ class CashCommand : CommandExecutor, TabCompleter {
                     }
 
                     "지급" -> {
-                        if (!addCashByUUID(uuid, balance)) {
+                        if (!addCashByUUID(uuid.toString(), balance)) {
                             UserMessage.sendFailMessage(player, "캐시를 지급하는 도중 오류가 발생했습니다.")
                             return false
                         }
@@ -137,7 +138,7 @@ class CashCommand : CommandExecutor, TabCompleter {
                     }
 
                     "차감" -> {
-                        if (!subtractCashByUUID(uuid, balance)) {
+                        if (!subtractCashByUUID(uuid.toString(), balance)) {
                             UserMessage.sendFailMessage(player, "캐시를 차감하는 도중 오류가 발생했습니다.")
                             return false
                         }

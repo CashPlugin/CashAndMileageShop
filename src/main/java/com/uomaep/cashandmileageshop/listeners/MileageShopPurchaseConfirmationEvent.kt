@@ -5,6 +5,7 @@ import com.uomaep.cashandmileageshop.dto.UserDTO
 import com.uomaep.cashandmileageshop.guis.MileageShopPurchaseConfirmationGUI
 import com.uomaep.cashandmileageshop.utils.DatabaseManager
 import com.uomaep.cashandmileageshop.utils.ItemUtil
+import com.uomaep.cashandmileageshop.utils.UserUtil
 import com.uomaep.mileageandmileageshop.guis.MileageShopGUI
 import org.bukkit.entity.HumanEntity
 import org.bukkit.event.EventHandler
@@ -140,6 +141,8 @@ class MileageShopPurchaseConfirmationEvent : Listener {
 
             //아이템 지급
             player.inventory.addItem(ItemUtil.deserialize(mileageItemDTO.itemInfo))
+            UserUtil.playBuyCompleteSound(player)
+            player.sendMessage("[마일리지상점]: §f◇ 아이템 구매에 성공하였습니다.")
 
             //마일리지 아이템 정보 다시 가져오기
             val item: ItemStack = getItemInfoById(mileageItemDTO, user.uuid)
@@ -147,7 +150,7 @@ class MileageShopPurchaseConfirmationEvent : Listener {
             //마일리지샵의 구매한 아이템 정보 새로고침
             e.inventory.setItem(mileageItemDTO.slotNum, item)
         } else {
-            player.sendMessage("[마일리지상점]: 마일리지가 부족합니다.")
+            player.sendMessage("[마일리지상점]: §f◇ §c잔액이 부족합니다.")
         }
         return true
     }
@@ -236,7 +239,7 @@ class MileageShopPurchaseConfirmationEvent : Listener {
         return result.getInt("cnt")
     }
 
-    fun itemLogging(userId: Int, itemId: Int, shopId: Int, e: InventoryClickEvent): Long {
+    private fun itemLogging(userId: Int, itemId: Int, shopId: Int, e: InventoryClickEvent): Long {
         val statement = "insert into mileage_log (user_id, mileage_item_id, purchase_at, mileage_shop_id) " +
                 "values (${userId}, ${itemId}, NOW(), ${shopId});"
         val insertedId = DatabaseManager.insertAndGetGeneratedKey(statement)
