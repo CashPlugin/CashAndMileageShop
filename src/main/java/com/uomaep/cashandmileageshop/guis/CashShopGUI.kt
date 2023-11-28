@@ -62,9 +62,9 @@ class CashShopGUI : InventoryHolder {
                 result.next()
                 val curBuyCnt = result.getInt("cnt")
                 infoLore.add(
-                    SERVER_LIMITED
-                        .replace("%server_remain%", (cashItemDTO.maxBuyableCnt - curBuyCnt).toString())
-                        .replace("%server_purchases_limited%", cashItemDTO.maxBuyableCnt.toString())
+                    USER_LIMITED
+                        .replace("%user_remain%", (cashItemDTO.maxBuyableCnt - curBuyCnt).toString())
+                        .replace("%user_purchases_limited%", cashItemDTO.maxBuyableCnt.toString())
                 )
             }
             if (cashItemDTO.maxBuyableCntServer != -1) {
@@ -75,9 +75,9 @@ class CashShopGUI : InventoryHolder {
                 result.next()
                 val curServerBuyCnt = result.getInt("cnt")
                 infoLore.add(
-                    USER_LIMITED
-                        .replace("%user_remain%", (cashItemDTO.maxBuyableCntServer - curServerBuyCnt).toString())
-                        .replace("%user_purchases_limited%", cashItemDTO.maxBuyableCntServer.toString())
+                    SERVER_LIMITED
+                        .replace("%server_remain%", (cashItemDTO.maxBuyableCntServer - curServerBuyCnt).toString())
+                        .replace("%server_purchases_limited%", cashItemDTO.maxBuyableCntServer.toString())
                 )
             }
 

@@ -60,9 +60,9 @@ class CashShopPurchaseConfirmationGUI: InventoryHolder {
 
             result.next()
             val curBuyCnt = result.getInt("cnt")
-            infoLore.add(CashShopGUI.SERVER_LIMITED
-                .replace("%server_remain%", (cashItemDTO.maxBuyableCnt - curBuyCnt).toString())
-                .replace("%server_purchases_limited%", cashItemDTO.maxBuyableCnt.toString()))
+            infoLore.add(CashShopGUI.USER_LIMITED
+                .replace("%user_remain%", (cashItemDTO.maxBuyableCnt - curBuyCnt).toString())
+                .replace("%user_purchases_limited%", cashItemDTO.maxBuyableCnt.toString()))
         }
         if (cashItemDTO.maxBuyableCntServer != -1){
             val sql = "select count(*) cnt from cash_log where " +
@@ -71,9 +71,9 @@ class CashShopPurchaseConfirmationGUI: InventoryHolder {
 
             result.next()
             val curServerBuyCnt = result.getInt("cnt")
-            infoLore.add(CashShopGUI.USER_LIMITED
-                .replace("%user_remain%", (cashItemDTO.maxBuyableCntServer - curServerBuyCnt).toString())
-                .replace("%user_purchases_limited%", cashItemDTO.maxBuyableCntServer.toString()))
+            infoLore.add(CashShopGUI.SERVER_LIMITED
+                .replace("%server_remain%", (cashItemDTO.maxBuyableCntServer - curServerBuyCnt).toString())
+                .replace("%server_purchases_limited%", cashItemDTO.maxBuyableCntServer.toString()))
         }
 
         infoLore.add("")

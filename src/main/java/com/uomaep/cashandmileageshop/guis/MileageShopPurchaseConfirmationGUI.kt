@@ -64,9 +64,9 @@ class MileageShopPurchaseConfirmationGUI : InventoryHolder {
             result.next()
             val curBuyCnt = result.getInt("cnt")
             infoLore.add(
-                MileageShopGUI.SERVER_LIMITED
-                    .replace("%server_remain%", (mileageItemDTO.maxBuyableCnt - curBuyCnt).toString())
-                    .replace("%server_purchases_limited%", mileageItemDTO.maxBuyableCnt.toString())
+                MileageShopGUI.USER_LIMITED
+                    .replace("%user_remain%", (mileageItemDTO.maxBuyableCnt - curBuyCnt).toString())
+                    .replace("%user_purchases_limited%", mileageItemDTO.maxBuyableCnt.toString())
             )
         }
         if (mileageItemDTO.maxBuyableCntServer != -1) {
@@ -77,9 +77,9 @@ class MileageShopPurchaseConfirmationGUI : InventoryHolder {
             result.next()
             val curServerBuyCnt = result.getInt("cnt")
             infoLore.add(
-                MileageShopGUI.USER_LIMITED
-                    .replace("%user_remain%", (mileageItemDTO.maxBuyableCntServer - curServerBuyCnt).toString())
-                    .replace("%user_purchases_limited%", mileageItemDTO.maxBuyableCntServer.toString())
+                MileageShopGUI.SERVER_LIMITED
+                    .replace("%server_remain%", (mileageItemDTO.maxBuyableCntServer - curServerBuyCnt).toString())
+                    .replace("%server_purchases_limited%", mileageItemDTO.maxBuyableCntServer.toString())
             )
         }
 
