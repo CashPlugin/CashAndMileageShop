@@ -55,7 +55,7 @@ object DatabaseManager {
 
     fun insert(statement: String): Boolean {
         val con = getConnection()
-        if(con != null) {
+        if (con != null) {
             try {
                 con.prepareStatement(statement).executeUpdate()
             } catch (e: SQLException) {
@@ -89,7 +89,6 @@ object DatabaseManager {
         }
         return -1
     }
-
 
 
     fun select(statement: String): ResultSet? {
@@ -137,16 +136,5 @@ object DatabaseManager {
             return false
         }
         return true
-    }
-
-    private fun loadDatabaseProperties(): Properties {
-        val properties = Properties()
-        try {
-            val inputStream: InputStream? = javaClass.classLoader.getResourceAsStream("application-database.properties")
-            inputStream?.use { properties.load(it) }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return properties
     }
 }
